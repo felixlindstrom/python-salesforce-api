@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Body>
+        <checkRetrieveStatusResponse>
+            <result>
+                <done>true</done>
+                <fileProperties>
+                    <createdById>123</createdById>
+                    <createdByName>Felix Lindström</createdByName>
+                    <createdDate>2019-02-07T11:48:07.723Z</createdDate>
+                    <fileName>package.xml</fileName>
+                    <fullName>package.xml</fullName>
+                    <id></id>
+                    <lastModifiedById>123</lastModifiedById>
+                    <lastModifiedByName>Felix Lindström</lastModifiedByName>
+                    <lastModifiedDate>2019-02-07T11:48:07.723Z</lastModifiedDate>
+                    <manageableState>unmanaged</manageableState>
+                    <type>Package</type>
+                </fileProperties>
+                <id>123</id>
+                <messages>
+                    <fileName>package.xml</fileName>
+                    <problem>Entity type: &apos;ApexClassa&apos; is unknown</problem>
+                </messages>
+                <status>Succeeded</status>
+                <success>true</success>
+                <zipFile xsi:nil="true" />
+            </result>
+        </checkRetrieveStatusResponse>
+    </soapenv:Body>
+</soapenv:Envelope>

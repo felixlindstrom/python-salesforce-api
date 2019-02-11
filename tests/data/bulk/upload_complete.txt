@@ -1,0 +1,12 @@
+{
+    "id": "123",
+    "operation": "insert",
+    "object": "${object}",
+    "createdById": "123",
+    "createdDate": "2019-02-06T11:44:05.000+0000",
+    "systemModstamp": "2019-02-06T11:44:05.000+0000",
+    "state": "UploadComplete",
+    "concurrencyMode": "Parallel",
+    "contentType": "CSV",
+    "apiVersion": 44.0
+}

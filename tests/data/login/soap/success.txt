@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="urn:enterprise.soap.sforce.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Body>
+        <loginResponse>
+            <result>
+                <metadataServerUrl>${metadata_url}</metadataServerUrl>
+                <passwordExpired>false</passwordExpired>
+                <sandbox>true</sandbox>
+                <serverUrl>${server_url}</serverUrl>
+                <sessionId>${access_token}</sessionId>
+                <userId>${user_id}</userId>
+                <userInfo>
+                    <accessibilityMode>false</accessibilityMode>
+                    <chatterExternal>false</chatterExternal>
+                    <currencySymbol xsi:nil="true" />
+                    <orgAttachmentFileSizeLimit>5242880</orgAttachmentFileSizeLimit>
+                    <orgDefaultCurrencyIsoCode xsi:nil="true" />
+                    <orgDefaultCurrencyLocale xsi:nil="true" />
+                    <orgDisallowHtmlAttachments>false</orgDisallowHtmlAttachments>
+                    <orgHasPersonAccounts>false</orgHasPersonAccounts>
+                    <organizationId>${org_id}</organizationId>
+                    <organizationMultiCurrency>true</organizationMultiCurrency>
+                    <organizationName>${org_name}</organizationName>
+                    <profileId>${profile_id}</profileId>
+                    <roleId>${role_id}</roleId>
+                    <sessionSecondsValid>7200</sessionSecondsValid>
+                    <userDefaultCurrencyIsoCode>SEK</userDefaultCurrencyIsoCode>
+                    <userEmail>${user_email}</userEmail>
+                    <userFullName>${user_full_name}</userFullName>
+                    <userId>${user_id}</userId>
+                    <userLanguage>en_US</userLanguage>
+                    <userLocale>sv_SE</userLocale>
+                    <userName>${user_email}</userName>
+                    <userTimeZone>Europe/Amsterdam</userTimeZone>
+                    <userType>Standard</userType>
+                    <userUiSkin>Theme3</userUiSkin>
+                </userInfo>
+            </result>
+        </loginResponse>
+    </soapenv:Body>
+</soapenv:Envelope>

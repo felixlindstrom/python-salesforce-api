@@ -1,0 +1,18 @@
+<soapenv:Envelope
+xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:met="http://soap.sforce.com/2006/04/metadata">
+   <soapenv:Header>
+      <met:CallOptions>
+         <met:client>{client_name}</met:client>
+      </met:CallOptions>
+      <met:SessionHeader>
+         <met:sessionId>{session_id}</met:sessionId>
+      </met:SessionHeader>
+   </soapenv:Header>
+   <soapenv:Body>
+      <met:checkRetrieveStatus>
+         <met:asyncProcessId>{async_process_id}</met:asyncProcessId>
+         <met:includeZip>{include_zip}</met:includeZip>
+      </met:checkRetrieveStatus>
+   </soapenv:Body>
+</soapenv:Envelope>

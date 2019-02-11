@@ -1,0 +1,20 @@
+<soapenv:Envelope
+xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:met="http://soap.sforce.com/2006/04/metadata">
+   <soapenv:Header>
+      <met:CallOptions>
+         <met:client>{client_name}</met:client>
+      </met:CallOptions>
+      <met:SessionHeader>
+         <met:sessionId>{session_id}</met:sessionId>
+      </met:SessionHeader>
+   </soapenv:Header>
+   <soapenv:Body>
+      <met:deploy>
+         <met:ZipFile>{zip_file}</met:ZipFile>
+         <met:DeployOptions>
+            {options}
+         </met:DeployOptions>
+      </met:deploy>
+   </soapenv:Body>
+</soapenv:Envelope>

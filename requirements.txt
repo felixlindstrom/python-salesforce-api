@@ -1,0 +1,5 @@
+requests
+pytest
+requests_mock
+xmltodict
+url-normalize

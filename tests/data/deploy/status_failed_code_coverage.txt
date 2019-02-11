@@ -1,0 +1,36 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+     <soapenv:Body>
+         <checkDeployStatusResponse>
+             <result>
+                 <checkOnly>true</checkOnly>
+                 <completedDate>2019-02-10T17:52:37.000Z</completedDate>
+                 <createdBy>123</createdBy>
+                 <createdByName>Felix Lindström</createdByName>
+                 <createdDate>2019-02-10T17:49:32.000Z</createdDate>
+                 <details>
+                     <runTestResult>
+                         <numFailures>0</numFailures>
+                         <numTestsRun>13</numTestsRun>
+                         <totalTime>36029.0</totalTime>
+                     </runTestResult>
+                 </details>
+                 <done>true</done>
+                 <id>123</id>
+                 <ignoreWarnings>false</ignoreWarnings>
+                 <lastModifiedDate>2019-02-10T17:52:37.000Z</lastModifiedDate>
+                 <numberComponentErrors>0</numberComponentErrors>
+                 <numberComponentsDeployed>503</numberComponentsDeployed>
+                 <numberComponentsTotal>503</numberComponentsTotal>
+                 <numberTestErrors>0</numberTestErrors>
+                 <numberTestsCompleted>13</numberTestsCompleted>
+                 <numberTestsTotal>13</numberTestsTotal>
+                 <rollbackOnError>true</rollbackOnError>
+                 <runTestsEnabled>true</runTestsEnabled>
+                 <startDate>2019-02-10T17:50:51.000Z</startDate>
+                 <status>Failed</status>
+                 <success>false</success>
+             </result>
+         </checkDeployStatusResponse>
+     </soapenv:Body>
+ </soapenv:Envelope>
