@@ -24,7 +24,7 @@ class TestServiceBulk(helpers.BaseTest):
             'LastName': last_name
         }
 
-    def test_successful(self, requests_mock):
+    def test_insert_successful(self, requests_mock):
         self.setup_instance(requests_mock)
         result = self.get_service('bulk').insert('Contact', [
             self.create_contact('FirstName', 'LastName'),
@@ -34,7 +34,7 @@ class TestServiceBulk(helpers.BaseTest):
         assert 2 == len([x for x in result if isinstance(x, models.bulk.SuccessResultRecord)])
         assert 1 == len([x for x in result if isinstance(x, models.bulk.FailResultRecord)])
 
-    def test_multiple_structures_failure(self, requests_mock):
+    def test_insert_multiple_structures_failure(self, requests_mock):
         self.setup_instance(requests_mock)
         with pytest.raises(exceptions.MultipleDifferentHeadersError):
             self.get_service('bulk').insert('Contact', [{
@@ -43,10 +43,15 @@ class TestServiceBulk(helpers.BaseTest):
                 'b': '456'
             }])
 
-    def test_empty_rows_failure(self, requests_mock):
+    def test_insert_empty_rows_failure(self, requests_mock):
         self.setup_instance(requests_mock)
         with pytest.raises(exceptions.BulkEmptyRowsError):
             self.get_service('bulk').insert('Contact', [
                 self.create_contact('FirstName', 'LastName'),
                 self.create_contact('', '')
             ])
+
+    def test_delete_successful(self, requests_mock):
+        self.setup_instance(requests_mock)
+        result = self.get_service('bulk').delete('Contact', ['123', '456'])
+        assert 2 == len([x for x in result if isinstance(x, models.bulk.SuccessResultRecord)])

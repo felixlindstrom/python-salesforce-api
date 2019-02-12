@@ -28,9 +28,6 @@ class TestServiceDeploy(helpers.BaseTest):
         with pytest.raises(exceptions.DeployCreateError):
             self.create_client().deploy.deploy(self._create_zip())
 
-    def test_cancel_successful(self, requests_mock):
-        pass
-
     def test_full_successful(self, requests_mock):
         self.setup_instance(requests_mock, [
             helpers.get_data('deploy/create_success.txt'),
@@ -40,16 +37,11 @@ class TestServiceDeploy(helpers.BaseTest):
         deployment = self.create_client().deploy.deploy(self._create_zip())
         deployment.get_status()
 
+    def test_cancel_successful(self, requests_mock):
+        pass
+
     def test_full_failure(self, requests_mock):
-        """
-        self.setup_instance(requests_mock, [
-            helpers.get_data('deploy/create_success.txt'),
-            helpers.get_data('deploy/status_pending.txt'),
-            helpers.get_data('deploy/status_failed.txt')
-        ])
-        deployment = self.create_client().deploy.deploy(self._create_zip())
-        deployment.get_status()
-        """
+        pass
 
     def test_code_coverage_failure(self, requests_mock):
         pass
