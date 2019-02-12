@@ -64,7 +64,7 @@ from salesforce_api import Salesforce
 client = Salesforce(username='test@example.com',
                     password='my-password',
                     security_token='password-token',
-                    login_url='http://login.example.com/')
+                    domain='login.example.com')
 ```
 
 The examples so far would use the SOAP API for authenticating. If you want to authenticate using an app, that's easy engough. The login-url and sandbox-arguments applies here as well.
@@ -84,11 +84,11 @@ client = Salesforce(access_token='access-token-here')
 
 If you want to explicitly use one or the other methods of authenticating, you can do that as well
 ```python
-from salesforce_api import login
-client = login.OAuth(username='test@example.com',
-                     password='my-password',
-                     client_id='123',
-                     client_secret='my-secret')
+from salesforce_api import Salesforce, login
+client = Salesforce(login.oauth2(username='test@example.com',
+                                 password='my-password',
+                                 client_id='123',
+                                 client_secret='my-secret'))
 ```
 
 Record management

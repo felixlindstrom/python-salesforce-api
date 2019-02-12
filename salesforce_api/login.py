@@ -1,107 +1,96 @@
 import re
 import requests
 from . import core, exceptions, const
-from .utils import soap
+from .utils import soap as soap_utils
 
 
-class LoginMethod:
-    def authenticate(self) -> core.Connection:
-        raise NotImplementedError
+def magic(domain: str = None, username: str = None, password: str = None,
+          security_token: str = None, client_id: str = None, client_secret: str = None, access_token: str = None,
+          session: requests.Session = requests.Session(), is_sandbox=False) -> core.Connection:
+    # Determine address and instance url
+    if domain is None:
+        domain = 'test.salesforce.com' if is_sandbox else 'login.salesforce.com'
+    instance_url = 'https://' + domain
 
-
-class AccessToken(LoginMethod):
-    def __init__(self, instance_url: str, access_token: str, session: requests.Session):
-        self.instance_url = instance_url
-        self.access_token = access_token
-        self.session = session
-
-    def authenticate(self) -> core.Connection:
-        return core.Connection(
-            version=const.API_VERSION,
-            access_token=self.access_token,
-            instance_url=self.instance_url,
-            session=self.session
+    # Figure out how to authenticate
+    if all([instance_url, username, password, security_token]):
+        return soap(
+            instance_url=instance_url,
+            username=username,
+            password=password,
+            security_token=security_token,
+            session=session
+        )
+    elif all([instance_url, client_id, client_secret, username, password]):
+        return oauth2(
+            instance_url=instance_url,
+            client_id=client_id,
+            client_secret=client_secret,
+            username=username,
+            password=password,
+            session=session
+        )
+    elif all([instance_url, access_token]):
+        return plain_access_token(
+            instance_url=instance_url,
+            access_token=access_token,
+            session=session
         )
 
-
-class OAuth(LoginMethod):
-    def __init__(self, instance_url: str, client_id: str, client_secret: str, username: str, password: str, session: requests.Session = requests.Session()):
-        self.instance_url = instance_url
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.username = username
-        self.password = password
-        self.session = session
-
-    def authenticate(self) -> core.Connection:
-        response = self.session.post(self.instance_url + '/services/oauth2/token', data=dict(
-            grant_type='password',
-            client_id=self.client_id,
-            client_secret=self.client_secret,
-            username=self.username,
-            password=self.password
-        ))
-        response_json = response.json()
-        if response.status_code == 200:
-            return self._handle_success(response_json)
-        return self._handle_error(response_json)
-
-    def _handle_success(self, response):
-        return core.Connection(
-            version=const.API_VERSION,
-            access_token=response['access_token'],
-            instance_url=response['instance_url']
-        )
-
-    def _handle_error(self, response):
-        if response.get('error') == 'invalid_client_id':
-            raise exceptions.AuthenticationInvalidClientIdError
-        elif response.get('error') == 'invalid_client':
-            raise exceptions.AuthenticationInvalidClientSecretError
-        else:
-            raise exceptions.AuthenticationError
+    # Could not decide
+    raise exceptions.AuthenticationError('Not enough information to select authentication-method')
 
 
-class Soap(LoginMethod):
-    def __init__(self, instance_url: str, username: str, password: str, security_token: str, session: requests.Session = requests.Session()):
-        self.instance_url = instance_url + '/services/Soap/c/' + const.API_VERSION
-        self.username = username
-        self.password = password
-        self.security_token = security_token
-        self.session = session
+def plain_access_token(instance_url: str, access_token: str, session: requests.Session) -> core.Connection:
+    return core.Connection(
+        version=const.API_VERSION,
+        access_token=access_token,
+        instance_url=instance_url,
+        session=session
+    )
 
-    def _get_body(self) -> str:
-        return soap.get_message('login/login.msg').format(
-            username=self.username,
-            password=self.password + self.security_token
-        )
+def oauth2(instance_url: str, client_id: str, client_secret: str, username: str, password: str, session: requests.Session = requests.Session()) -> core.Connection:
+    response = session.post(instance_url + '/services/oauth2/token', data=dict(
+        grant_type='password',
+        client_id=client_id,
+        client_secret=client_secret,
+        username=username,
+        password=password
+    ))
+    response_json = response.json()
 
-    def authenticate(self) -> core.Connection:
-        response = self.session.post(self.instance_url, headers={
-            'Content-Type': 'text/xml',
-            'SOAPAction': 'login'
-        }, data=self._get_body())
-        result = soap.Result(response.text)
+    if response_json.get('error') == 'invalid_client_id':
+        raise exceptions.AuthenticationInvalidClientIdError
+    elif response_json.get('error') == 'invalid_client':
+        raise exceptions.AuthenticationInvalidClientSecretError
+    elif response.status_code != 200:
+        raise exceptions.AuthenticationError('Status-code ' + str(response.status_code) + ' returned while trying to authenticate')
 
-        if result.has('soapenv:Envelope/soapenv:Body/loginResponse/result/sessionId'):
-            return self._handle_success(result)
+    return plain_access_token(response_json['instance_url'], access_token=response_json['access_token'], session=session)
 
-        return self._handle_error(result)
 
-    def _handle_success(self, result: soap.Result):
-        session_id = result.get_value('soapenv:Envelope/soapenv:Body/loginResponse/result/sessionId')
-        server_url = result.get_value('soapenv:Envelope/soapenv:Body/loginResponse/result/serverUrl')
+def soap(instance_url: str, username: str, password: str, security_token: str, session: requests.Session = requests.Session()) -> core.Connection:
+    instance_url = instance_url + '/services/Soap/c/' + const.API_VERSION
+
+    body = soap_utils.get_message('login/login.msg').format(
+        username=username,
+        password=password + security_token
+    )
+
+    response = soap_utils.Result(session.post(instance_url, headers={
+        'Content-Type': 'text/xml',
+        'SOAPAction': 'login'
+    }, data=body).text)
+
+    if response.has('soapenv:Envelope/soapenv:Body/loginResponse/result/sessionId'):
+        session_id = response.get_value('soapenv:Envelope/soapenv:Body/loginResponse/result/sessionId')
+        server_url = response.get_value('soapenv:Envelope/soapenv:Body/loginResponse/result/serverUrl')
         instance = re.match(r'(https://(.*).salesforce\.com/)', server_url).group(1)
-        return core.Connection(
-            version=const.API_VERSION,
-            access_token=session_id,
-            instance_url=instance
-        )
+        return plain_access_token(access_token=session_id, instance_url=instance, session=session)
 
-    def _handle_error(self, result: soap.Result):
-        if not result.has('soapenv:Envelope/soapenv:Body/soapenv:Fault/faultcode'):
-            raise exceptions.AuthenticationError
-        code = result.get_value('soapenv:Envelope/soapenv:Body/soapenv:Fault/faultcode')
-        if code.find('LOGIN_MUST_USE_SECURITY_TOKEN'):
-            raise exceptions.AuthenticationMissingTokenError
+    if not response.has('soapenv:Envelope/soapenv:Body/soapenv:Fault/faultcode'):
         raise exceptions.AuthenticationError
+    code = response.get_value('soapenv:Envelope/soapenv:Body/soapenv:Fault/faultcode')
+    if code.find('LOGIN_MUST_USE_SECURITY_TOKEN'):
+        raise exceptions.AuthenticationMissingTokenError
+    raise exceptions.AuthenticationError

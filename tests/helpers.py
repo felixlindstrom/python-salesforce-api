@@ -9,7 +9,8 @@ TEST_CLIENT_KEY = 'test-key'
 TEST_CLIENT_SECRET = 'test-secret'
 TEST_SECURITY_TOKEN = 'test-token'
 TEST_ACCESS_TOKEN = 'test-access-token'
-TEST_INSTANCE_URL = 'https://example.cs108.my.salesforce.com'
+TEST_DOMAIN = 'example.cs108.my.salesforce.com'
+TEST_INSTANCE_URL = 'https://' + TEST_DOMAIN
 TEST_ISSUE_TIME = time.time()
 TEST_ID = 'https://test.salesforce.com/id/123/456'
 TEST_SIGNATURE = '123456789'
@@ -55,7 +56,7 @@ def get_data(path):
 class BaseTest:
     def create_client(self):
         return Salesforce(
-            instance_url=TEST_INSTANCE_URL,
+            domain=TEST_DOMAIN,
             access_token=TEST_ACCESS_TOKEN
         )
 

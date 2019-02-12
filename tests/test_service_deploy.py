@@ -1,6 +1,6 @@
 import pytest
 from io import BytesIO
-from salesforce_api import models, exceptions
+from salesforce_api import exceptions
 from . import helpers
 
 
