@@ -1,19 +1,15 @@
 import time
-from typing import IO
 from base64 import b64decode
 from io import BytesIO
 from typing import List
-from .. import core, exceptions, const, config
+from .. import exceptions, const, config
 from ..utils import soap
 from ..models import retrieve as models
 from . import base
 
 
 class Retrieve(base.SoapService):
-    def __init__(self, connection: core.Connection):
-        super().__init__(connection)
-
-    def retrieve(self, types: List[models.Type], options: models.Options=models.Options()) -> 'Retrievement':
+    def retrieve(self, types: List[models.Type], options: models.Options = models.Options()) -> 'Retrievement':
         result = self._post(action='retrieve', message_path='retrieve/retrieve.msg', message_attributes={
             'api_version': const.API_VERSION,
             'single_package': options.single_package,
@@ -40,7 +36,7 @@ class Retrieve(base.SoapService):
             ))
         return status
 
-    def get_zip_file(self, async_process_id: str) -> IO:
+    def get_zip_file(self, async_process_id: str) -> BytesIO:
         result = self._retrieve_status(async_process_id, True)
         status = result.get_value('status')
         if status not in const.STATUSES_DONE:
@@ -80,5 +76,5 @@ class Retrievement:
                 tick(status)
             time.sleep(config.RETRIEVE_SLEEP_SECONDS)
 
-    def get_zip_file(self) -> IO:
+    def get_zip_file(self) -> BytesIO:
         return self.retrieve_service.get_zip_file(self.async_process_id)

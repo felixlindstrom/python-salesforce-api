@@ -1,6 +1,4 @@
-from collections import OrderedDict
 import requests
-from pprint import pprint
 from .. import exceptions, config, core
 from ..utils import soap
 

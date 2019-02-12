@@ -3,7 +3,7 @@ import io
 import csv
 import json
 from typing import List
-from .. import core, config, const, exceptions
+from .. import config, const, exceptions
 from ..utils import bulk as bulk_utils
 from ..models import bulk as models
 from . import base

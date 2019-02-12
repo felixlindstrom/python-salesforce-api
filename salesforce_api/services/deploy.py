@@ -1,15 +1,12 @@
 import time
 from base64 import b64encode
-from .. import core, exceptions, const, config
+from .. import exceptions, const, config
 from ..utils import misc
 from ..models import deploy as models
 from . import base
 
 
 class Deploy(base.SoapService):
-    def __init__(self, connection: core.Connection):
-        super().__init__(connection)
-
     def _get_zip_content(self, input_file) -> str:
         if isinstance(input_file, str):
             input_file = open(input_file, 'rb')

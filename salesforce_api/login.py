@@ -1,6 +1,5 @@
 import re
 import requests
-from pprint import pprint
 from . import core, exceptions, const
 from .utils import soap
 
@@ -64,7 +63,7 @@ class OAuth(LoginMethod):
 
 
 class Soap(LoginMethod):
-    def __init__(self, instance_url: str, username: str, password: str, security_token: str, session: requests.Session=requests.Session()):
+    def __init__(self, instance_url: str, username: str, password: str, security_token: str, session: requests.Session = requests.Session()):
         self.instance_url = instance_url + '/services/Soap/c/' + const.API_VERSION
         self.username = username
         self.password = password
@@ -100,7 +99,6 @@ class Soap(LoginMethod):
         )
 
     def _handle_error(self, result: soap.Result):
-        pprint(result._dict)
         if not result.has('soapenv:Envelope/soapenv:Body/soapenv:Fault/faultcode'):
             raise exceptions.AuthenticationError
         code = result.get_value('soapenv:Envelope/soapenv:Body/soapenv:Fault/faultcode')

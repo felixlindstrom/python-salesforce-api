@@ -6,7 +6,6 @@ class Options(base.Model):
     def __init__(self):
         self.single_package = True
         self.unpackaged = []
-    pass
 
 
 class Type:

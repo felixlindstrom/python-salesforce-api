@@ -1,8 +1,9 @@
-from . import bulk, deploy, retrieve
+from . import bulk, deploy, retrieve, tooling
 
 
 __all__ = [
     'bulk',
     'deploy',
-    'retrieve'
+    'retrieve',
+    'tooling'
 ]
