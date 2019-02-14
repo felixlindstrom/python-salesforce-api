@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 if __name__ == '__main__':
     setup(
         name="salesforce-api",
-        version="0.1.11",
+        version="0.1.15",
         author="Felix Lindstrom",
         author_email='felix.lindstrom@gmail.com',
         description="Salesforce API wrapper",
@@ -13,8 +13,14 @@ if __name__ == '__main__':
         long_description_content_type="text/markdown",
         keywords=['salesforce', 'salesforce api', 'salesforce bulk api'],
         license='MIT',
-        packages=['salesforce_api'],
-        install_requires=[],
+        packages=find_packages(exclude=['docs', 'tests*']),
+        install_requires=[
+            'requests',
+            'pytest',
+            'requests_mock',
+            'xmltodict',
+            'url-normalize'
+        ],
         zip_safe=True,
         url='https://github.com/felixlindstrom/python-salesforce-api',
         classifiers=[
