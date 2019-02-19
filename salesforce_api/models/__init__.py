@@ -5,5 +5,6 @@ __all__ = [
     'bulk',
     'deploy',
     'retrieve',
-    'tooling'
+    'tooling',
+    'shared'
 ]

@@ -4,12 +4,13 @@ from io import BytesIO
 from typing import List
 from .. import exceptions, const, config
 from ..utils import soap
-from ..models import retrieve as models
+from ..models import retrieve as retrieve_models
+from ..models import shared as shared_models
 from . import base
 
 
 class Retrieve(base.SoapService):
-    def retrieve(self, types: List[models.Type], options: models.Options = models.Options()) -> 'Retrievement':
+    def retrieve(self, types: List[shared_models.Type], options: retrieve_models.Options = retrieve_models.Options()) -> 'Retrievement':
         result = self._post(action='retrieve', message_path='retrieve/retrieve.msg', message_attributes={
             'api_version': const.API_VERSION,
             'single_package': options.single_package,
@@ -26,13 +27,13 @@ class Retrieve(base.SoapService):
         })
         return result.get('soapenv:Envelope/soapenv:Body/checkRetrieveStatusResponse/result')
 
-    def get_status(self, async_process_id: str) -> models.Status:
+    def get_status(self, async_process_id: str) -> retrieve_models.Status:
         result = self._retrieve_status(async_process_id, False)
-        status = models.Status(result.get_value('status'), result.get_value('errorMessage'))
+        status = retrieve_models.Status(result.get_value('status'), result.get_value('errorMessage'))
         messages = result.get('messages', [])
         messages = messages if isinstance(messages, list) else [messages]
         for message in messages:
-            status.append_message(models.StatusMessage(
+            status.append_message(retrieve_models.StatusMessage(
                 message.get('fileName'),
                 message.get('problem')
             ))
@@ -47,7 +48,7 @@ class Retrieve(base.SoapService):
             raise exceptions.ZipNotAvailableError
         return BytesIO(b64decode(result.get_value('zipFile')))
 
-    def _prepare_unpackaged_xml(self, types: List[models.Type]):
+    def _prepare_unpackaged_xml(self, types: List[shared_models.Type]):
         output = []
         for _type in types:
             output.append('<types>')
@@ -63,7 +64,7 @@ class Retrievement:
         self.async_process_id = async_process_id
         self.retrieve_service = retrieve_service
 
-    def get_status(self) -> models.Status:
+    def get_status(self) -> retrieve_models.Status:
         return self.retrieve_service.get_status(self.async_process_id)
 
     def is_done(self):

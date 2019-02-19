@@ -15,7 +15,7 @@ class TestServiceRetrieve(helpers.BaseTest):
             helpers.get_data('retrieve/create_success.txt')
         ])
         retrievement = self.create_client().retrieve.retrieve([
-            models.retrieve.Type('ApexClass')
+            models.shared.Type('ApexClass')
         ])
         assert '123' == retrievement.async_process_id
 
@@ -25,7 +25,7 @@ class TestServiceRetrieve(helpers.BaseTest):
         ])
         with pytest.raises(exceptions.RetrieveCreateError):
             self.create_client().retrieve.retrieve([
-                models.retrieve.Type('ApexClass')
+                models.shared.Type('ApexClass')
             ])
 
     def test_full_retrieve_successful(self, requests_mock):
@@ -35,7 +35,7 @@ class TestServiceRetrieve(helpers.BaseTest):
             helpers.get_data('retrieve/status_with_zip.txt')
         ])
         retrievement = self.create_client().retrieve.retrieve([
-            models.retrieve.Type('ApexClass')
+            models.shared.Type('ApexClass')
         ])
         assert retrievement.is_done()
 
