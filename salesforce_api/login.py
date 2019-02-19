@@ -1,12 +1,14 @@
 import re
 import requests
 from . import core, exceptions, const
+from .utils import misc as misc_utils
 from .utils import soap as soap_utils
 
 
 def magic(domain: str = None, username: str = None, password: str = None,
           security_token: str = None, client_id: str = None, client_secret: str = None, access_token: str = None,
-          session: requests.Session = requests.Session(), is_sandbox=False) -> core.Connection:
+          session: requests.Session = None, is_sandbox=False) -> core.Connection:
+    session = misc_utils.get_session(session)
     # Determine address and instance url
     if domain is None:
         domain = 'test.salesforce.com' if is_sandbox else 'login.salesforce.com'
@@ -46,10 +48,11 @@ def plain_access_token(instance_url: str, access_token: str, session: requests.S
         version=const.API_VERSION,
         access_token=access_token,
         instance_url=instance_url,
-        session=session
+        session=misc_utils.get_session(session)
     )
 
-def oauth2(instance_url: str, client_id: str, client_secret: str, username: str, password: str, session: requests.Session = requests.Session()) -> core.Connection:
+def oauth2(instance_url: str, client_id: str, client_secret: str, username: str, password: str, session: requests.Session = None) -> core.Connection:
+    session = misc_utils.get_session(session)
     response = session.post(instance_url + '/services/oauth2/token', data=dict(
         grant_type='password',
         client_id=client_id,
@@ -69,7 +72,8 @@ def oauth2(instance_url: str, client_id: str, client_secret: str, username: str,
     return plain_access_token(response_json['instance_url'], access_token=response_json['access_token'], session=session)
 
 
-def soap(instance_url: str, username: str, password: str, security_token: str, session: requests.Session = requests.Session()) -> core.Connection:
+def soap(instance_url: str, username: str, password: str, security_token: str, session: requests.Session = None) -> core.Connection:
+    session = misc_utils.get_session(session)
     instance_url = instance_url + '/services/Soap/c/' + const.API_VERSION
 
     body = soap_utils.get_message('login/login.msg').format(
@@ -92,5 +96,5 @@ def soap(instance_url: str, username: str, password: str, security_token: str, s
         raise exceptions.AuthenticationError
     code = response.get_value('soapenv:Envelope/soapenv:Body/soapenv:Fault/faultcode')
     if code.find('LOGIN_MUST_USE_SECURITY_TOKEN'):
-        raise exceptions.AuthenticationMissingTokenError
+        raise exceptions.AuthenticationMissingTokenError('Missing or invalid security-token provided.')
     raise exceptions.AuthenticationError

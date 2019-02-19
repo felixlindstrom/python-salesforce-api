@@ -8,12 +8,6 @@ class Options(base.Model):
         self.unpackaged = []
 
 
-class Type:
-    def __init__(self, name, members: list = None):
-        self.name = name
-        self.members = members or ['*']
-
-
 class StatusMessage(base.Model):
     def __init__(self, file: str, message: str):
         self.file = file

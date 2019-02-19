@@ -1,6 +1,7 @@
 import requests
 from url_normalize import url_normalize
 from . import const
+from .utils import misc as misc_utils
 
 
 class Connection:
@@ -8,7 +9,7 @@ class Connection:
         self.version = version
         self.access_token = access_token
         self.instance_url = instance_url
-        self.session = session or requests.Session()
+        self.session = misc_utils.get_session(session)
 
     def request(self, verb: str, **kwargs) -> requests.Response:
         kwargs['url'] = url_normalize(kwargs['url'])

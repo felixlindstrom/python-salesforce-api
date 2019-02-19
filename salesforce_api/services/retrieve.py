@@ -29,10 +29,12 @@ class Retrieve(base.SoapService):
     def get_status(self, async_process_id: str) -> models.Status:
         result = self._retrieve_status(async_process_id, False)
         status = models.Status(result.get_value('status'), result.get_value('errorMessage'))
-        for message in result.get('details/messages', []):
+        messages = result.get('messages', [])
+        messages = messages if isinstance(messages, list) else [messages]
+        for message in messages:
             status.append_message(models.StatusMessage(
-                message.get_value('fileName'),
-                message.get_value('problem')
+                message.get('fileName'),
+                message.get('problem')
             ))
         return status
 

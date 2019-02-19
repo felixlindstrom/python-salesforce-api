@@ -1,11 +1,28 @@
 #!/usr/bin/env python
+import os
+from glob import glob
 from setuptools import setup, find_packages
+from salesforce_api import __version__
+
+
+def data_files_inventory():
+    data_files = []
+    data_roots = ['salesforce_api/data']
+    for data_root in data_roots:
+        for root, subfolder, files in os.walk(data_root):
+            files = [x.replace('salesforce_api/', '') for x in glob(root + '/*')
+                     if not os.path.isdir(x)]
+            data_files = data_files + files
+    return data_files
+
+
+PACKAGE_DATA = {'salesforce_api': data_files_inventory()}
 
 
 if __name__ == '__main__':
     setup(
         name="salesforce-api",
-        version="0.1.15",
+        version=__version__,
         author="Felix Lindstrom",
         author_email='felix.lindstrom@gmail.com',
         description="Salesforce API wrapper",
@@ -14,6 +31,8 @@ if __name__ == '__main__':
         keywords=['salesforce', 'salesforce api', 'salesforce bulk api'],
         license='MIT',
         packages=find_packages(exclude=['docs', 'tests*']),
+        package_data=PACKAGE_DATA,
+        include_package_data=True,
         install_requires=[
             'requests',
             'pytest',

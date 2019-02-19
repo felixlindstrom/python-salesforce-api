@@ -2,6 +2,7 @@ import requests
 from .core import Connection
 from . import login
 from .services import sobjects, basic, tooling, deploy, retrieve, bulk
+from .utils import misc as misc_utils
 
 
 class Client:
@@ -17,7 +18,7 @@ class Client:
             client_id=client_id,
             client_secret=client_secret,
             access_token=access_token,
-            session=session,
+            session=misc_utils.get_session(session),
             is_sandbox=is_sandbox
         )
         self._setup_services()

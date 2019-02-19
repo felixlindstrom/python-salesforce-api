@@ -6,7 +6,7 @@ xmlns:met="http://soap.sforce.com/2006/04/metadata">
          <met:client>{client_name}</met:client>
       </met:CallOptions>
       <met:SessionHeader>
-         <met:sessionId>{session_idd}</met:sessionId>
+         <met:sessionId>{session_id}</met:sessionId>
       </met:SessionHeader>
    </soapenv:Header>
    <soapenv:Body>
