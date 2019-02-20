@@ -8,13 +8,14 @@ from .utils import misc as misc_utils
 class Client:
     def __init__(self, connection: Connection = None,
                  domain: str = None, username: str = None, password: str = None,
-                 security_token: str = None, client_id: str = None, client_secret: str = None,
-                 access_token: str = None, session: requests.Session = None, is_sandbox=False):
+                 security_token: str = None, password_and_security_token: str = None, client_id: str = None,
+                 client_secret: str = None, access_token: str = None, session: requests.Session = None, is_sandbox=False):
         self.connection = connection if connection else login.magic(
             domain=domain,
             username=username,
             password=password,
             security_token=security_token,
+            password_and_security_token=password_and_security_token,
             client_id=client_id,
             client_secret=client_secret,
             access_token=access_token,

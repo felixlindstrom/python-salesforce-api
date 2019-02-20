@@ -5,8 +5,8 @@ from .utils import misc as misc_utils
 from .utils import soap as soap_utils
 
 
-def magic(domain: str = None, username: str = None, password: str = None,
-          security_token: str = None, client_id: str = None, client_secret: str = None, access_token: str = None,
+def magic(domain: str = None, username: str = None, password: str = None, security_token: str = None, password_and_security_token: str = None,
+          client_id: str = None, client_secret: str = None, access_token: str = None,
           session: requests.Session = None, is_sandbox=False) -> core.Connection:
     session = misc_utils.get_session(session)
     # Determine address and instance url
@@ -21,6 +21,7 @@ def magic(domain: str = None, username: str = None, password: str = None,
             username=username,
             password=password,
             security_token=security_token,
+            password_and_security_token=password_and_security_token,
             session=session
         )
     elif all([instance_url, client_id, client_secret, username, password]):
@@ -72,13 +73,13 @@ def oauth2(instance_url: str, client_id: str, client_secret: str, username: str,
     return plain_access_token(response_json['instance_url'], access_token=response_json['access_token'], session=session)
 
 
-def soap(instance_url: str, username: str, password: str, security_token: str, session: requests.Session = None) -> core.Connection:
+def soap(instance_url: str, username: str, password: str, password_and_security_token: str, security_token: str, session: requests.Session = None) -> core.Connection:
     session = misc_utils.get_session(session)
     instance_url = instance_url + '/services/Soap/c/' + const.API_VERSION
 
     body = soap_utils.get_message('login/login.msg').format(
         username=username,
-        password=password + security_token
+        password=password_and_security_token or password + security_token
     )
 
     response = soap_utils.Result(session.post(instance_url, headers={

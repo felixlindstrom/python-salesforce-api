@@ -2,7 +2,6 @@
 import os
 from glob import glob
 from setuptools import setup, find_packages
-from salesforce_api import __version__
 
 
 def data_files_inventory():
@@ -22,7 +21,7 @@ PACKAGE_DATA = {'salesforce_api': data_files_inventory()}
 if __name__ == '__main__':
     setup(
         name="salesforce-api",
-        version=__version__,
+        version='0.1.22',
         author="Felix Lindstrom",
         author_email='felix.lindstrom@gmail.com',
         description="Salesforce API wrapper",
