@@ -51,6 +51,16 @@ class TestSoap(helpers.BaseTest):
         assert isinstance(connection, core.Connection)
         assert connection.access_token == helpers.TEST_ACCESS_TOKEN
 
+    def test_authenticate_alt_password_success(self, requests_mock):
+        self.register_uri(requests_mock, 'POST', '/services/Soap/c/{version}', text=helpers.get_data('login/soap/success.txt'))
+        connection = login.soap(
+            instance_url=helpers.TEST_INSTANCE_URL,
+            username=helpers.TEST_USER_EMAIL,
+            password_and_security_token=helpers.TEST_PASSWORD
+        )
+        assert isinstance(connection, core.Connection)
+        assert connection.access_token == helpers.TEST_ACCESS_TOKEN
+
     def test_authenticate_missing_token_failure(self, requests_mock):
         self.register_uri(requests_mock, 'POST', '/services/Soap/c/{version}', text=helpers.get_data('login/soap/missing_token.txt'))
         with pytest.raises(exceptions.AuthenticationMissingTokenError):

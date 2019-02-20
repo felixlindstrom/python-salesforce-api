@@ -15,7 +15,7 @@ def magic(domain: str = None, username: str = None, password: str = None, securi
     instance_url = 'https://' + domain
 
     # Figure out how to authenticate
-    if all([instance_url, username, password, security_token]):
+    if all([instance_url, username]) and (all([password, security_token]) or password_and_security_token):
         return soap(
             instance_url=instance_url,
             username=username,
@@ -73,7 +73,7 @@ def oauth2(instance_url: str, client_id: str, client_secret: str, username: str,
     return plain_access_token(response_json['instance_url'], access_token=response_json['access_token'], session=session)
 
 
-def soap(instance_url: str, username: str, password: str, security_token: str, password_and_security_token: str = None, session: requests.Session = None) -> core.Connection:
+def soap(instance_url: str, username: str, password: str = None, security_token: str = None, password_and_security_token: str = None, session: requests.Session = None) -> core.Connection:
     session = misc_utils.get_session(session)
     instance_url = instance_url + '/services/Soap/c/' + const.API_VERSION
 

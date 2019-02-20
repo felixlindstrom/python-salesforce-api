@@ -21,7 +21,7 @@ PACKAGE_DATA = {'salesforce_api': data_files_inventory()}
 if __name__ == '__main__':
     setup(
         name="salesforce-api",
-        version='0.1.22',
+        version='0.1.26',
         author="Felix Lindstrom",
         author_email='felix.lindstrom@gmail.com',
         description="Salesforce API wrapper",
@@ -34,8 +34,6 @@ if __name__ == '__main__':
         include_package_data=True,
         install_requires=[
             'requests',
-            'pytest',
-            'requests_mock',
             'xmltodict',
             'url-normalize'
         ],

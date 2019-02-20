@@ -16,9 +16,9 @@ class Connection:
         result = getattr(self.session, verb)(**kwargs)
         # print('Verb: ' + verb)
         # print('URL: ' + kwargs['url'])
-        print('Result: ' + result.text)
-        print()
-        print()
+        # print('Result: ' + result.text)
+        # print()
+        # print()
         # print()
         # print()
         return result
