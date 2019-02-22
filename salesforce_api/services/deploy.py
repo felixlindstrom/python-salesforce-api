@@ -41,7 +41,7 @@ class Deploy(base.SoapService):
         ))
 
         if status.status.lower().strip() == 'failed':
-            for failure in result.get('details/componentFailures', []):
+            for failure in result.get_list('details/componentFailures'):
                 status.components.append_failure(models.ComponentFailure(
                     failure.get('componentType'),
                     failure.get('fileName'),
@@ -49,7 +49,7 @@ class Deploy(base.SoapService):
                     failure.get('problem')
                 ))
 
-            for failure in result.get('details/runTestResult/failures', []):
+            for failure in result.get_list('details/runTestResult/failures'):
                 status.tests.append_failure(models.UnitTestFailure(
                     failure.get('name'),
                     failure.get('methodName'),
@@ -70,6 +70,13 @@ class Deployment:
     def __init__(self, deploy_service: Deploy, async_process_id: str):
         self.deploy_service = deploy_service
         self.async_process_id = async_process_id
+        self.start_time = time.time()
+
+    def get_elapsed_seconds(self):
+        return time.time() - self.start_time
+
+    def get_elapsed_time(self):
+        return time.strftime("%H:%M:%S", time.gmtime(self.get_elapsed_seconds()))
 
     def cancel(self) -> bool:
         return self.deploy_service.cancel(self.async_process_id)
@@ -93,4 +100,4 @@ class Deployment:
                 tick(status)
             if status.status in const.STATUSES_DONE:
                 break
-            time.sleep(config.RETRIEVE_SLEEP_SECONDS)
+            time.sleep(config.DEPLOY_SLEEP_SECONDS)

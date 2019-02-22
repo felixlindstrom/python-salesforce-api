@@ -31,11 +31,28 @@ class TestServiceDeploy(helpers.BaseTest):
     def test_full_successful(self, requests_mock):
         self.setup_instance(requests_mock, [
             helpers.get_data('deploy/create_success.txt'),
-            helpers.get_data('deploy/status_pending.txt'),
             helpers.get_data('deploy/status_success.txt')
         ])
         deployment = self.create_client().deploy.deploy(self._create_zip())
         deployment.get_status()
+
+    def test_single_test_error_failure(self, requests_mock):
+        self.setup_instance(requests_mock, [
+            helpers.get_data('deploy/create_success.txt'),
+            helpers.get_data('deploy/status_failed_single.txt')
+        ])
+        deployment = self.create_client().deploy.deploy(self._create_zip())
+        status = deployment.get_status()
+        assert 1 == len(status.tests.failures)
+
+    def test_multiple_test_error_failure(self, requests_mock):
+        self.setup_instance(requests_mock, [
+            helpers.get_data('deploy/create_success.txt'),
+            helpers.get_data('deploy/status_failed_multiple.txt')
+        ])
+        deployment = self.create_client().deploy.deploy(self._create_zip())
+        status = deployment.get_status()
+        assert 3 == len(status.tests.failures)
 
     def test_cancel_successful(self, requests_mock):
         pass

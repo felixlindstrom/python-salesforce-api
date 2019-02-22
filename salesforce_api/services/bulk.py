@@ -119,7 +119,7 @@ class Job(base.RestService):
 
     def wait(self):
         while not self.is_done():
-            time.sleep(config.POLL_SLEEP_SECONDS)
+            time.sleep(config.BULK_SLEEP_SECONDS)
 
         if self.get_state() in const.BULK_STATES_FAIL:
             raise exceptions.BulkJobFailedError(self.info().get('errorMessage'))

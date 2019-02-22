@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Body>
+        <checkDeployStatusResponse>
+            <result>
+                <checkOnly>true</checkOnly>
+                <completedDate>2019-02-10T17:32:36.000Z</completedDate>
+                <createdBy>123</createdBy>
+                <createdByName>Felix Lindström</createdByName>
+                <createdDate>2019-02-10T17:28:57.000Z</createdDate>
+                <details>
+                    <componentSuccesses>
+                        <changed>false</changed>
+                        <componentType>ApexTrigger</componentType>
+                        <created>false</created>
+                        <createdDate>2019-02-10T17:31:39.000Z</createdDate>
+                        <deleted>false</deleted>
+                        <fileName>triggers/UserTrigger.trigger</fileName>
+                        <fullName>UserTrigger</fullName>
+                        <id>123</id>
+                        <success>true</success>
+                    </componentSuccesses>
+                    <componentSuccesses>
+                        <changed>true</changed>
+                        <componentType></componentType>
+                        <created>false</created>
+                        <createdDate>2019-02-10T17:31:39.000Z</createdDate>
+                        <deleted>false</deleted>
+                        <fileName>package.xml</fileName>
+                        <fullName>package.xml</fullName>
+                        <success>true</success>
+                    </componentSuccesses>
+                    <runTestResult>
+                        <failures>
+                            <id>123</id>
+                            <message>System.AssertException: Assertion Failed: Expected: 9876543, Actual: null</message>
+                            <methodName>tester</methodName>
+                            <name>TesterIntegrationApplicationTest</name>
+                            <namespace xsi:nil="true" />
+                            <packageName>TesterIntegrationApplicationTest</packageName>
+                            <stackTrace>Class.TesterIntegrationApplicationTest.tester: line 231, column 1</stackTrace><time>4631.0</time>
+                            <type>Class</type>
+                        </failures>
+                        <failures>
+                            <id>123</id>
+                            <message>System.AssertException: Assertion Failed: Expected: 9876543, Actual: null</message>
+                            <methodName>tester</methodName>
+                            <name>TesterIntegrationApplicationTest</name>
+                            <namespace xsi:nil="true" />
+                            <packageName>TesterIntegrationApplicationTest</packageName>
+                            <stackTrace>Class.TesterIntegrationApplicationTest.tester: line 231, column 1</stackTrace><time>4631.0</time>
+                            <type>Class</type>
+                        </failures>
+                        <failures>
+                            <id>123</id>
+                            <message>System.AssertException: Assertion Failed: Expected: 9876543, Actual: null</message>
+                            <methodName>tester</methodName>
+                            <name>TesterIntegrationApplicationTest</name>
+                            <namespace xsi:nil="true" />
+                            <packageName>TesterIntegrationApplicationTest</packageName>
+                            <stackTrace>Class.TesterIntegrationApplicationTest.tester: line 231, column 1</stackTrace><time>4631.0</time>
+                            <type>Class</type>
+                        </failures>
+                        <numFailures>2</numFailures>
+                        <numTestsRun>13</numTestsRun>
+                        <successes>
+                            <id>123</id>
+                            <methodName>tester</methodName>
+                            <name>TesterIntegrationApplicationTest</name>
+                            <namespace xsi:nil="true" /><time>252.0</time>
+                        </successes>
+                        <successes>
+                            <id>123</id>
+                            <methodName>tester</methodName>
+                            <name>TesterIntegrationApplicationTest</name>
+                            <namespace xsi:nil="true" /><time>183.0</time>
+                        </successes>
+                        <totalTime>34265.0</totalTime>
+                    </runTestResult>
+                </details>
+                <done>true</done>
+                <id>123</id>
+                <ignoreWarnings>false</ignoreWarnings>
+                <lastModifiedDate>2019-02-10T17:32:36.000Z</lastModifiedDate>
+                <numberComponentErrors>0</numberComponentErrors>
+                <numberComponentsDeployed>503</numberComponentsDeployed>
+                <numberComponentsTotal>503</numberComponentsTotal>
+                <numberTestErrors>2</numberTestErrors>
+                <numberTestsCompleted>11</numberTestsCompleted>
+                <numberTestsTotal>13</numberTestsTotal>
+                <rollbackOnError>true</rollbackOnError>
+                <runTestsEnabled>true</runTestsEnabled>
+                <startDate>2019-02-10T17:30:50.000Z</startDate>
+                <status>Failed</status>
+                <success>false</success>
+            </result>
+        </checkDeployStatusResponse>
+    </soapenv:Body>
+</soapenv:Envelope>

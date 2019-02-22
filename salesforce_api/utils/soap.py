@@ -33,6 +33,17 @@ class Result:
             return Result(result)
         return result
 
+    def get_list(self, path):
+        try:
+            result = self._get(self._dict, parse_path(path))
+        except exceptions.NodeNotFoundError:
+            return []
+        if isinstance(result, list):
+            return result
+        if isinstance(result, (dict, OrderedDict)):
+            return [result]
+        return
+
     def get_value(self, path, default_value=False):
         result = self.get(path, default_value)
         if isinstance(result, Result):
