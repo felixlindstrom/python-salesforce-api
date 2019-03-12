@@ -13,27 +13,27 @@ class Bulk(base.RestService):
     def __init__(self, connection):
         super().__init__(connection, 'jobs/ingest')
 
-    def insert(self, object_name: str, entries: List[dict]) -> 'Job':
+    def insert(self, object_name: str, entries: List[dict]) -> List[models.ResultRecord]:
         return self._execute_operation('insert', object_name, entries)
 
-    def update(self, object_name: str, entries: List[dict]) -> 'Job':
+    def update(self, object_name: str, entries: List[dict]) -> List[models.ResultRecord]:
         return self._execute_operation('update', object_name, entries)
 
-    def upsert(self, object_name: str, entries: List[dict], external_id_field_name: str = 'Id') -> 'Job':
+    def upsert(self, object_name: str, entries: List[dict], external_id_field_name: str = 'Id') -> List[models.ResultRecord]:
         return self._execute_operation('upsert', object_name, entries, external_id_field_name)
 
     def select(self, **kwargs):
         raise NotImplementedError
 
-    def delete(self, object_name: str, ids: List[str]) -> 'Job':
+    def delete(self, object_name: str, ids: List[str]) -> List[models.ResultRecord]:
         return self._execute_operation('delete', object_name, [{'Id': id} for id in ids])
 
-    def _execute_operation(self, operation: str, object_name: str, entries: List[dict], external_id_field_name: str = None) -> 'Job':
+    def _execute_operation(self, operation: str, object_name: str, entries: List[dict], external_id_field_name: str = None) -> List[models.ResultRecord]:
         job_instance = self._create_job(operation, object_name, external_id_field_name)
         job_instance.upload(entries)
         return job_instance.wait()
 
-    def _create_job(self, operation, object_name, external_id_field_name):
+    def _create_job(self, operation, object_name, external_id_field_name) -> 'Job':
         result = self._post(json={
             'columnDelimiter': 'COMMA',
             'contentType': 'CSV',
@@ -50,16 +50,16 @@ class BulkObject:
         self.object_name = object_name
         self.bulk_service = Bulk(connection)
 
-    def insert(self, entries: List[dict]) -> 'Job':
+    def insert(self, entries: List[dict]) -> List[models.ResultRecord]:
         return self.bulk_service.insert(self.object_name, entries)
 
-    def delete(self, ids: List[str]) -> 'Job':
+    def delete(self, ids: List[str]) -> List[models.ResultRecord]:
         return self.bulk_service.delete(self.object_name, ids)
 
-    def update(self, entries: List[dict]) -> 'Job':
+    def update(self, entries: List[dict]) -> List[models.ResultRecord]:
         return self.bulk_service.update(self.object_name, entries)
 
-    def upsert(self, entries: List[dict], external_id_field_name='Id') -> 'Job':
+    def upsert(self, entries: List[dict], external_id_field_name='Id') -> List[models.ResultRecord]:
         return self.bulk_service.upsert(self.object_name, entries, external_id_field_name)
 
 
@@ -117,7 +117,7 @@ class Job(base.RestService):
     def get_unprocessed_records(self) -> List[models.ResultRecord]:
         raise NotImplementedError
 
-    def wait(self):
+    def wait(self) -> List[models.ResultRecord]:
         while not self.is_done():
             time.sleep(config.BULK_SLEEP_SECONDS)
 
