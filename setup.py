@@ -21,7 +21,7 @@ PACKAGE_DATA = {'salesforce_api': data_files_inventory()}
 if __name__ == '__main__':
     setup(
         name="salesforce-api",
-        version='0.1.30',
+        version='0.1.31',
         author="Felix Lindstrom",
         author_email='felix.lindstrom@gmail.com',
         description="Salesforce API wrapper",

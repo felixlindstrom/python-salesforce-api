@@ -220,6 +220,8 @@ Bulk
 
 This module implements the Bulk V2 API. Basically, it allows you to think less and do more.
 
+Note that the correct permission-set might be needed on the user, see https://success.salesforce.com/issues_view?id=a1p3A000000BMPFQA4
+
 ##### Bulk Insert
 Example
 ```python

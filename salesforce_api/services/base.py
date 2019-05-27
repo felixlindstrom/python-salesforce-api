@@ -42,10 +42,11 @@ class RestService(_Service):
         self.connection.session.headers['Authorization'] = 'Bearer ' + self.connection.access_token
 
     def _request(self, verb: str, **kwargs):
-        kwargs['headers'] = {
-            'Accept': 'application/json',
-            'Content-type': 'application/json'
-        }
+        if 'headers' not in kwargs:
+            kwargs['headers'] = {
+                'Accept': 'application/json',
+                'Content-type': 'application/json'
+            }
         return self._parse_response(self.request(verb, **kwargs))
 
     def _response_is_json(self, response):
