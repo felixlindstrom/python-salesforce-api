@@ -81,7 +81,7 @@ class RestService(_Service):
             return response.text
 
     def _get_url(self, url: str, params: dict = None):
-        return self._request('get', uri=url, params=params)
+        return self._request('get', url=url, params=params)
 
     def _get(self, uri: str = None, params: dict = None):
         return self._request('get', uri=uri, params=params)

@@ -14,7 +14,7 @@ class SObjects(base.RestService):
         return self._get('../queryAll' if include_deleted else '../query', {'q': query_string})
 
     def _query_more(self, next_url: str):
-        return self._get_url(url=next_url)
+        return self._get_url(self.connection.instance_url + next_url)
 
     def query(self, query_string: str, include_deleted: bool = False):
         result = self._query(query_string, include_deleted)

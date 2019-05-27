@@ -38,7 +38,7 @@ class FilePreparer:
         writer.writerows([
             entry.values()
             for entry in self.entries
-            if ''.join(entry.values()) != ''
+            if ''.join([str(x) for x in entry.values()]) != ''
         ])
         return file_handle
 
