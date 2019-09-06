@@ -104,15 +104,14 @@ class Job(base.RestService):
 
     def _get_results(self, uri, callback):
         result = self.connection.request('get', url=self._format_url(uri)).text
-        reader = csv.reader(io.StringIO(result))
-        next(reader, None)
+        reader = csv.DictReader(io.StringIO(result))
         return [callback(x) for x in reader]
 
     def get_successful_results(self) -> List[models.ResultRecord]:
-        return self._get_results('successfulResults', lambda x: models.SuccessResultRecord(x[0]))
+        return self._get_results('successfulResults', lambda x: models.SuccessResultRecord(x['sf__Id'], x))
 
     def get_failed_results(self) -> List[models.ResultRecord]:
-        return self._get_results('failedResults', lambda x: models.FailResultRecord(x[0], x[1]))
+        return self._get_results('failedResults', lambda x: models.FailResultRecord(x['sf__Id'], x['sf__Error'], x))
 
     def get_unprocessed_records(self) -> List[models.ResultRecord]:
         raise NotImplementedError

@@ -1,4 +1,5 @@
 import pytest
+import datetime
 from salesforce_api import exceptions, models
 from . import helpers
 
@@ -18,11 +19,13 @@ class TestServiceBulk(helpers.BaseTest):
         self.register_uri(requests_mock, 'GET', _BASE_URL + '/' + _JOB_ID + '/successfulResults', text=helpers.get_data('bulk/successful_results.txt'))
         self.register_uri(requests_mock, 'GET', _BASE_URL + '/' + _JOB_ID + '/failedResults', text=helpers.get_data('bulk/failed_results.txt'))
 
+
     def create_contact(self, first_name, last_name):
         return {
             'FirstName': first_name,
             'LastName': last_name
         }
+
 
     def test_insert_successful(self, requests_mock):
         self.setup_instance(requests_mock)
@@ -34,6 +37,23 @@ class TestServiceBulk(helpers.BaseTest):
         assert 2 == len([x for x in result if isinstance(x, models.bulk.SuccessResultRecord)])
         assert 1 == len([x for x in result if isinstance(x, models.bulk.FailResultRecord)])
 
+
+    def test_insert_different_types_successful(self, requests_mock):
+        self.setup_instance(requests_mock)
+        result = self.get_service('bulk').insert('Contact', [
+            {
+                'a': 1,
+                'b': 1.23,
+                'c': datetime.datetime.now(),
+                'd': False,
+                'e': True,
+                'f': 'string'
+            }
+        ])
+        assert 2 == len([x for x in result if isinstance(x, models.bulk.SuccessResultRecord)])
+        assert 1 == len([x for x in result if isinstance(x, models.bulk.FailResultRecord)])
+
+
     def test_insert_multiple_structures_failure(self, requests_mock):
         self.setup_instance(requests_mock)
         with pytest.raises(exceptions.MultipleDifferentHeadersError):
@@ -42,6 +62,7 @@ class TestServiceBulk(helpers.BaseTest):
             }, {
                 'b': '456'
             }])
+
 
     def test_insert_empty_rows_failure(self, requests_mock):
         self.setup_instance(requests_mock)

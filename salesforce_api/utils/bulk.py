@@ -18,7 +18,7 @@ class FilePreparer:
 
     def _check_empty_rows(self) -> bool:
         for row in self.entries:
-            if ''.join(row.values()).strip() == '':
+            if ''.join(str(x) for x in row.values() if x is not None).strip() == '':
                 return False
         return True
 
@@ -38,7 +38,7 @@ class FilePreparer:
         writer.writerows([
             entry.values()
             for entry in self.entries
-            if ''.join([str(x) for x in entry.values()]) != ''
+            if ''.join([str(x) for x in entry.values() if x is not None]) != ''
         ])
         return file_handle
 

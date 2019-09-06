@@ -187,6 +187,7 @@ EXTENSION_TO_TYPE = {
     'role': ROLE,
     'settings': SETTING,
     'sharingRules': SHARING_RULES,
+    'standardValueSet': STANDARD_VALUE_SET,
     'site': CUSTOM_SITE,
     'tab': CUSTOM_TAB,
     'translation': TRANSLATIONS,
