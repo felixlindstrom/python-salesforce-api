@@ -4,6 +4,7 @@ import csv
 import json
 from typing import List
 from .. import config, const, exceptions
+from ..const import OPERATION, BULK_STATE
 from ..utils import bulk as bulk_utils
 from ..models import bulk as models
 from . import base
@@ -14,35 +15,35 @@ class Bulk(base.RestService):
         super().__init__(connection, 'jobs/ingest')
 
     def insert(self, object_name: str, entries: List[dict]) -> List[models.ResultRecord]:
-        return self._execute_operation('insert', object_name, entries)
+        return self._execute_operation(OPERATION.INSERT, object_name, entries)
 
     def update(self, object_name: str, entries: List[dict]) -> List[models.ResultRecord]:
-        return self._execute_operation('update', object_name, entries)
+        return self._execute_operation(OPERATION.UPDATE, object_name, entries)
 
     def upsert(self, object_name: str, entries: List[dict], external_id_field_name: str = 'Id') -> List[models.ResultRecord]:
-        return self._execute_operation('upsert', object_name, entries, external_id_field_name)
+        return self._execute_operation(OPERATION.UPSERT, object_name, entries, external_id_field_name)
 
     def select(self, **kwargs):
         raise NotImplementedError
 
     def delete(self, object_name: str, ids: List[str]) -> List[models.ResultRecord]:
-        return self._execute_operation('delete', object_name, [{'Id': id} for id in ids])
+        return self._execute_operation(OPERATION.DELETE, object_name, [{'Id': id} for id in ids])
 
-    def _execute_operation(self, operation: str, object_name: str, entries: List[dict], external_id_field_name: str = None) -> List[models.ResultRecord]:
-        job_instance = self._create_job(operation, object_name, external_id_field_name)
-        job_instance.upload(entries)
-        return job_instance.wait()
-
-    def _create_job(self, operation, object_name, external_id_field_name) -> 'Job':
+    def create_job(self, operation: OPERATION, object_name: str, external_id_field_name: str = None) -> 'Job':
         result = self._post(json={
             'columnDelimiter': 'COMMA',
             'contentType': 'CSV',
             'lineEnding': 'LF',
             'object': object_name,
-            'operation': operation,
+            'operation': operation.value,
             'externalIdFieldName': external_id_field_name
         })
         return Job(self.connection, result.get('id'))
+
+    def _execute_operation(self, operation: OPERATION, object_name: str, entries: List[dict], external_id_field_name: str = None) -> List[models.ResultRecord]:
+        job_instance = self.create_job(operation, object_name, external_id_field_name)
+        job_instance.upload(entries)
+        return job_instance.wait()
 
 
 class BulkObject:
@@ -68,8 +69,8 @@ class Job(base.RestService):
         super().__init__(connection, 'jobs/ingest/' + job_id)
         self.job_id = job_id
 
-    def _set_state(self, new_state):
-        return self._patch(json={'state': new_state})
+    def _set_state(self, new_state: BULK_STATE):
+        return self._patch(json={'state': new_state.value})
 
     def _prepare_data(self, entries):
         return bulk_utils.FilePreparer(entries).get_csv_string()
@@ -81,14 +82,14 @@ class Job(base.RestService):
             })
         except json.decoder.JSONDecodeError:
             pass
-        self._set_state(const.BULK_STATE_UPLOAD_COMPLETE)
+        self._set_state(BULK_STATE.UPLOAD_COMPLETE)
         return True
 
     def close(self):
-        return self._set_state('UploadComplete')
+        return self._set_state(BULK_STATE.UPLOAD_COMPLETE)
 
     def abort(self):
-        return self._set_state('Aborted')
+        return self._set_state(BULK_STATE.ABORTED)
 
     def delete(self):
         return self._delete()
@@ -96,8 +97,8 @@ class Job(base.RestService):
     def info(self):
         return self._get()
 
-    def get_state(self):
-        return self.info().get('state')
+    def get_state(self) -> BULK_STATE:
+        return BULK_STATE(self.info().get('state'))
 
     def is_done(self) -> bool:
         return self.get_state() in const.BULK_STATES_DONE
