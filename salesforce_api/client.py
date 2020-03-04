@@ -27,7 +27,10 @@ class Client:
     def _setup_services(self):
         self.basic = basic.Basic(self.connection)
         self.sobjects = sobjects.SObjects(self.connection)
-        self.bulk = bulk.Bulk(self.connection)
         self.tooling = tooling.Tooling(self.connection)
         self.deploy = deploy.Deploy(self.connection)
         self.retrieve = retrieve.Retrieve(self.connection)
+
+        self.bulk = bulk.Client(self.connection)
+        self.bulk_v1 = bulk.v1.Client(self.connection)
+        self.bulk_v2 = bulk.v2.Client(self.connection)

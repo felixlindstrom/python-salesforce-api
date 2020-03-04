@@ -3,7 +3,7 @@ import os
 import json
 from string import Template
 from salesforce_api import Salesforce, const
-
+from salesforce_api.const.service import VERB
 
 TEST_CLIENT_KEY = 'test-key'
 TEST_CLIENT_SECRET = 'test-secret'
@@ -63,12 +63,12 @@ class BaseTest:
     def get_service(self, service_name):
         return self.create_client().__getattribute__(service_name)
 
-    def register_uri(self, requests_mock, method, uri, **kwargs):
+    def register_uri(self, requests_mock, verb: VERB, uri: str, **kwargs):
         if 'json' in kwargs:
             kwargs['text'] = json.dumps(kwargs['json'])
             del kwargs['json']
         requests_mock.register_uri(
-            method,
+            verb.value,
             uri.format_map({'version': const.API_VERSION}),
             **kwargs
         )

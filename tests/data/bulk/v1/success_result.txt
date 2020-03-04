@@ -1,0 +1,20 @@
+[
+   {
+      "success" : true,
+      "created" : true,
+      "id" : "001xx000003DHP0AAO",
+      "errors" : []
+   },
+   {
+      "success" : true,
+      "created" : true,
+      "id" : "001xx000003DHP1AAO",
+      "errors" : []
+   },
+   {
+      "success" : false,
+      "created" : true,
+      "id" : "001xx000003DHP1AAO",
+      "errors" : []
+   }
+]
