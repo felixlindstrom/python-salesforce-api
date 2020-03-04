@@ -1,6 +1,8 @@
 import requests
+import logging
 from url_normalize import url_normalize
 from . import const
+from .const.service import VERB
 from .utils import misc as misc_utils
 
 
@@ -11,14 +13,12 @@ class Connection:
         self.instance_url = instance_url
         self.session = misc_utils.get_session(session)
 
-    def request(self, verb: str, **kwargs) -> requests.Response:
+    def request(self, verb: VERB, **kwargs) -> requests.Response:
         kwargs['url'] = url_normalize(kwargs['url'])
-        result = getattr(self.session, verb)(**kwargs)
-        # print('Verb: ' + verb)
-        # print('URL: ' + kwargs['url'])
-        # print('Result: ' + result.text)
-        # print()
-        # print()
-        # print()
-        # print()
+        result = getattr(self.session, verb.value)(**kwargs)
+        logging.info('Verb: {verb}, URL: {url}, Result: {result}'.format(
+            verb=verb.value,
+            url=kwargs['url'],
+            result=result.text
+        ))
         return result

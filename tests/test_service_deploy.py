@@ -1,12 +1,13 @@
 import pytest
 from io import BytesIO
 from salesforce_api import exceptions
+from salesforce_api.const.service import VERB
 from . import helpers
 
 
 class TestServiceDeploy(helpers.BaseTest):
     def setup_instance(self, requests_mock, texts):
-        self.register_uri(requests_mock, 'POST', '/services/Soap/m/{version}', response_list=[
+        self.register_uri(requests_mock, VERB.POST, '/services/Soap/m/{version}', response_list=[
             {'text': x, 'status_code': 200} if isinstance(x, str) else x
             for x in texts
         ])

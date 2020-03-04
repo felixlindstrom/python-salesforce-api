@@ -1,4 +1,6 @@
 import pytest
+
+from salesforce_api.const.service import VERB
 from . import helpers
 from salesforce_api import login, core, exceptions
 
@@ -45,14 +47,14 @@ class TestSoap(helpers.BaseTest):
         )
 
     def test_authenticate_success(self, requests_mock):
-        self.register_uri(requests_mock, 'POST', '/services/Soap/c/{version}', text=helpers.get_data('login/soap/success.txt'))
+        self.register_uri(requests_mock, VERB.POST, '/services/Soap/c/{version}', text=helpers.get_data('login/soap/success.txt'))
         connection = self.create_connection()
 
         assert isinstance(connection, core.Connection)
         assert connection.access_token == helpers.TEST_ACCESS_TOKEN
 
     def test_authenticate_alt_password_success(self, requests_mock):
-        self.register_uri(requests_mock, 'POST', '/services/Soap/c/{version}', text=helpers.get_data('login/soap/success.txt'))
+        self.register_uri(requests_mock, VERB.POST, '/services/Soap/c/{version}', text=helpers.get_data('login/soap/success.txt'))
         connection = login.soap(
             instance_url=helpers.TEST_INSTANCE_URL,
             username=helpers.TEST_USER_EMAIL,
@@ -62,11 +64,11 @@ class TestSoap(helpers.BaseTest):
         assert connection.access_token == helpers.TEST_ACCESS_TOKEN
 
     def test_authenticate_missing_token_failure(self, requests_mock):
-        self.register_uri(requests_mock, 'POST', '/services/Soap/c/{version}', text=helpers.get_data('login/soap/missing_token.txt'))
+        self.register_uri(requests_mock, VERB.POST, '/services/Soap/c/{version}', text=helpers.get_data('login/soap/missing_token.txt'))
         with pytest.raises(exceptions.AuthenticationMissingTokenError):
             self.create_connection()
 
     def test_invalid_login_failure(self, requests_mock):
-        self.register_uri(requests_mock, 'POST', '/services/Soap/c/{version}', text=helpers.get_data('login/soap/invalid_login.txt'))
+        self.register_uri(requests_mock, VERB.POST, '/services/Soap/c/{version}', text=helpers.get_data('login/soap/invalid_login.txt'))
         with pytest.raises(exceptions.AuthenticationError):
             self.create_connection()

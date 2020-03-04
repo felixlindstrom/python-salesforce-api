@@ -1,5 +1,7 @@
+import json
 import requests
 from .. import exceptions, config, core
+from ..const.service import VERB
 from ..utils import soap
 
 
@@ -24,7 +26,7 @@ class _Service:
             version=self.connection.version
         )
 
-    def request(self, verb: str, **kwargs) -> requests.Response:
+    def request(self, verb: VERB, **kwargs) -> requests.Response:
         if 'uri' in kwargs:
             kwargs['url'] = self._format_url(kwargs['uri'] or '')
             del kwargs['uri']
@@ -41,7 +43,7 @@ class RestService(_Service):
     def _setup_session(self) -> None:
         self.connection.session.headers['Authorization'] = 'Bearer ' + self.connection.access_token
 
-    def _request(self, verb: str, **kwargs):
+    def _request(self, verb: VERB, **kwargs):
         if 'headers' not in kwargs:
             kwargs['headers'] = {
                 'Accept': 'application/json',
@@ -82,22 +84,55 @@ class RestService(_Service):
             return response.text
 
     def _get_url(self, url: str, params: dict = None):
-        return self._request('get', url=url, params=params)
+        return self._request(VERB.GET, url=url, params=params)
 
     def _get(self, uri: str = None, params: dict = None):
-        return self._request('get', uri=uri, params=params)
+        return self._request(VERB.GET, uri=uri, params=params)
 
     def _post(self, uri: str = None, json: dict = None):
-        return self._request('post', uri=uri, json=json)
+        return self._request(VERB.POST, uri=uri, json=json)
 
     def _put(self, uri: str = None, json: dict = None, data: str = None, **kwargs):
-        return self._request('put', uri=uri, json=json, data=data, **kwargs)
+        return self._request(VERB.PUT, uri=uri, json=json, data=data, **kwargs)
 
     def _patch(self, uri: str = None, json: dict = None, data: str = None):
-        return self._request('patch', uri=uri, json=json, data=data)
+        return self._request(VERB.PATCH, uri=uri, json=json, data=data)
 
     def _delete(self, uri: str = None):
-        return self._request('delete', uri=uri)
+        return self._request(VERB.DELETE, uri=uri)
+
+
+class AsyncService(_Service):
+    def __init__(self, connection: core.Connection, base_uri: str = None):
+        super().__init__(connection, 'services/async/{version}/' + (base_uri or ''))
+
+    def _setup(self):
+        self._setup_session()
+
+    def _setup_session(self) -> None:
+        self.connection.session.headers['X-SFDC-Session'] = self.connection.access_token
+
+    def _request(self, verb: VERB, **kwargs):
+        if 'headers' not in kwargs:
+            kwargs['headers'] = {
+                'Accept': 'application/json',
+                'Content-type': 'application/json'
+            }
+        return self._parse_response(self.request(verb, **kwargs))
+
+    def _parse_response(self, response: requests.Response):
+        try:
+            return response.json()
+        except:
+            return response.text
+
+    def _get(self, uri: str = None, params: dict = None):
+        return self._request(VERB.GET, uri=uri, params=params)
+
+    def _post(self, uri: str = None, data = None):
+        if not isinstance(data, str):
+            data = json.dumps(data, default=str)
+        return self._request(VERB.POST, uri=uri, data=data)
 
 
 class SoapService(_Service):
@@ -116,7 +151,7 @@ class SoapService(_Service):
 
     def _post(self, action=None, message_path=None, message_attributes=None) -> soap.Result:
         data = self._prepare_message(message_path, message_attributes or {})
-        result = self.request('post', url=self._format_url(''), data=data, headers={
+        result = self.request(VERB.POST, url=self._format_url(''), data=data, headers={
             'Content-type': 'text/xml',
             'SOAPAction': action
         })

@@ -1,6 +1,7 @@
 import pytest
 import datetime
 from salesforce_api import exceptions, models
+from salesforce_api.const.service import VERB
 from . import helpers
 
 
@@ -10,14 +11,14 @@ _JOB_ID = '123'
 
 class TestServiceBulk(helpers.BaseTest):
     def setup_instance(self, requests_mock):
-        self.register_uri(requests_mock, 'POST', _BASE_URL, text=helpers.get_data('bulk/create.txt'))
+        self.register_uri(requests_mock, VERB.POST, _BASE_URL, text=helpers.get_data('bulk/v2/create.txt'))
 
-        self.register_uri(requests_mock, 'GET', _BASE_URL + '/' + _JOB_ID, text=helpers.get_data('bulk/info.txt'))
-        self.register_uri(requests_mock, 'PATCH', _BASE_URL + '/' + _JOB_ID, text=helpers.get_data('bulk/upload_complete.txt'))
-        self.register_uri(requests_mock, 'PUT', _BASE_URL + '/' + _JOB_ID + '/batches', text='')
+        self.register_uri(requests_mock, VERB.GET, _BASE_URL + '/' + _JOB_ID, text=helpers.get_data('bulk/v2/info.txt'))
+        self.register_uri(requests_mock, VERB.PATCH, _BASE_URL + '/' + _JOB_ID, text=helpers.get_data('bulk/v2/upload_complete.txt'))
+        self.register_uri(requests_mock, VERB.PUT, _BASE_URL + '/' + _JOB_ID + '/batches', text='')
 
-        self.register_uri(requests_mock, 'GET', _BASE_URL + '/' + _JOB_ID + '/successfulResults', text=helpers.get_data('bulk/successful_results.txt'))
-        self.register_uri(requests_mock, 'GET', _BASE_URL + '/' + _JOB_ID + '/failedResults', text=helpers.get_data('bulk/failed_results.txt'))
+        self.register_uri(requests_mock, VERB.GET, _BASE_URL + '/' + _JOB_ID + '/successfulResults', text=helpers.get_data('bulk/v2/successful_results.txt'))
+        self.register_uri(requests_mock, VERB.GET, _BASE_URL + '/' + _JOB_ID + '/failedResults', text=helpers.get_data('bulk/v2/failed_results.txt'))
 
 
     def create_contact(self, first_name, last_name):

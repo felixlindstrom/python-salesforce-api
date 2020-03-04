@@ -1,16 +1,39 @@
-import time
-import io
 import csv
+import io
 import json
+import time
+from enum import Enum
 from typing import List
-from .. import config, const, exceptions
-from ..const import OPERATION, BULK_STATE
-from ..utils import bulk as bulk_utils
-from ..models import bulk as models
-from . import base
+
+from . import base as bulk_base
+from .. import base
+from ... import config, exceptions
+from ...const.service import VERB
+from ...models import bulk as models
+from ...utils import bulk as bulk_utils
 
 
-class Bulk(base.RestService):
+class OPERATION(Enum):
+    INSERT = 'insert'
+    UPDATE = 'update'
+    UPSERT = 'upsert'
+    DELETE = 'delete'
+    SELECT = 'select'
+
+
+class JOB_STATE(Enum):
+    OPEN = 'Open'
+    UPLOAD_COMPLETE = 'UploadComplete'
+    ABORTED = 'Aborted'
+    JOB_COMPLETE = 'JobComplete'
+    FAILED = 'Failed'
+
+
+JOB_STATES_DONE = [JOB_STATE.JOB_COMPLETE, JOB_STATE.ABORTED, JOB_STATE.FAILED]
+JOB_STATES_FAIL = [JOB_STATE.ABORTED, JOB_STATE.FAILED]
+
+
+class Client(bulk_base.Client, base.RestService):
     def __init__(self, connection):
         super().__init__(connection, 'jobs/ingest')
 
@@ -29,39 +52,10 @@ class Bulk(base.RestService):
     def delete(self, object_name: str, ids: List[str]) -> List[models.ResultRecord]:
         return self._execute_operation(OPERATION.DELETE, object_name, [{'Id': id} for id in ids])
 
-    def create_job(self, operation: OPERATION, object_name: str, external_id_field_name: str = None) -> 'Job':
-        result = self._post(json={
-            'columnDelimiter': 'COMMA',
-            'contentType': 'CSV',
-            'lineEnding': 'LF',
-            'object': object_name,
-            'operation': operation.value,
-            'externalIdFieldName': external_id_field_name
-        })
-        return Job(self.connection, result.get('id'))
-
     def _execute_operation(self, operation: OPERATION, object_name: str, entries: List[dict], external_id_field_name: str = None) -> List[models.ResultRecord]:
-        job_instance = self.create_job(operation, object_name, external_id_field_name)
-        job_instance.upload(entries)
-        return job_instance.wait()
-
-
-class BulkObject:
-    def __init__(self, object_name, connection):
-        self.object_name = object_name
-        self.bulk_service = Bulk(connection)
-
-    def insert(self, entries: List[dict]) -> List[models.ResultRecord]:
-        return self.bulk_service.insert(self.object_name, entries)
-
-    def delete(self, ids: List[str]) -> List[models.ResultRecord]:
-        return self.bulk_service.delete(self.object_name, ids)
-
-    def update(self, entries: List[dict]) -> List[models.ResultRecord]:
-        return self.bulk_service.update(self.object_name, entries)
-
-    def upsert(self, entries: List[dict], external_id_field_name='Id') -> List[models.ResultRecord]:
-        return self.bulk_service.upsert(self.object_name, entries, external_id_field_name)
+        job = Job.create(self.connection, operation, object_name, external_id_field_name)
+        job.upload(entries)
+        return job.wait()
 
 
 class Job(base.RestService):
@@ -69,7 +63,7 @@ class Job(base.RestService):
         super().__init__(connection, 'jobs/ingest/' + job_id)
         self.job_id = job_id
 
-    def _set_state(self, new_state: BULK_STATE):
+    def _set_state(self, new_state: JOB_STATE):
         return self._patch(json={'state': new_state.value})
 
     def _prepare_data(self, entries):
@@ -82,14 +76,14 @@ class Job(base.RestService):
             })
         except json.decoder.JSONDecodeError:
             pass
-        self._set_state(BULK_STATE.UPLOAD_COMPLETE)
+        self._set_state(JOB_STATE.UPLOAD_COMPLETE)
         return True
 
     def close(self):
-        return self._set_state(BULK_STATE.UPLOAD_COMPLETE)
+        return self._set_state(JOB_STATE.UPLOAD_COMPLETE)
 
     def abort(self):
-        return self._set_state(BULK_STATE.ABORTED)
+        return self._set_state(JOB_STATE.ABORTED)
 
     def delete(self):
         return self._delete()
@@ -97,14 +91,14 @@ class Job(base.RestService):
     def info(self):
         return self._get()
 
-    def get_state(self) -> BULK_STATE:
-        return BULK_STATE(self.info().get('state'))
+    def get_state(self) -> JOB_STATE:
+        return JOB_STATE(self.info().get('state'))
 
     def is_done(self) -> bool:
-        return self.get_state() in const.BULK_STATES_DONE
+        return self.get_state() in JOB_STATES_DONE
 
     def _get_results(self, uri, callback):
-        result = self.connection.request('get', url=self._format_url(uri)).text
+        result = self.connection.request(VERB.GET, url=self._format_url(uri)).text
         reader = csv.DictReader(io.StringIO(result))
         return [callback(x) for x in reader]
 
@@ -121,8 +115,20 @@ class Job(base.RestService):
         while not self.is_done():
             time.sleep(config.BULK_SLEEP_SECONDS)
 
-        if self.get_state() in const.BULK_STATES_FAIL:
+        if self.get_state() in JOB_STATES_FAIL:
             raise exceptions.BulkJobFailedError(self.info().get('errorMessage'))
 
         return self.get_failed_results() + \
                self.get_successful_results()
+
+    @classmethod
+    def create(cls, connection, operation: OPERATION, object_name: str, external_id_field_name: str = None) -> 'Job':
+        result = base.RestService(connection, 'jobs/ingest')._post(json={
+            'columnDelimiter': 'COMMA',
+            'contentType': 'CSV',
+            'lineEnding': 'LF',
+            'object': object_name,
+            'operation': operation.value,
+            'externalIdFieldName': external_id_field_name
+        })
+        return Job(connection, result.get('id'))
