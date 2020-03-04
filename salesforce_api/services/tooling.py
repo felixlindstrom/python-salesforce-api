@@ -17,9 +17,8 @@ class Tooling(base.RestService):
         )
 
     def execute_apex_from_file(self, file_path: str):
-        return self.execute_apex(
-            open(file_path, 'r').read()
-        )
+        with open(file_path, 'r') as fh:
+            return self.execute_apex(fh.read())
 
     def query(self, query: str):
         return self._get('query', {'q': query})

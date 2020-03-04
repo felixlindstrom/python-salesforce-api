@@ -300,6 +300,20 @@ Returns
  <FailResultRecord record_id="0031l000007rU5sAAE" success="False" error="ENTITY_IS_DELETED:entity is deleted:--" />]
 ```
 
+##### Manual managing bulk job
+By using the api above, the library hides the uploading and waiting for the bulk-process to get processed.
+
+In some cases you might want to handle this differently. Perhaps you want to upload bunch of records to be inserted and then forget about the process. This can be done by creating a job and managing it by yourself.
+```python
+bulk_job = client.bulk.create_job(OPERATION.INSERT, 'Contact')
+bulk_job.upload([
+    {'LastName': 'Lindstrom', 'Email': 'test@example.com'},
+    {'LastName': 'Something else', 'Email': 'test@example.com'}
+])
+while not bulk_job.is_done():
+    time.sleep(5)
+```
+
 Tooling
 -------
 
