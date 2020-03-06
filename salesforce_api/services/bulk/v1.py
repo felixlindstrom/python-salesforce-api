@@ -65,10 +65,9 @@ class Job(base.AsyncService):
         self.batches = []
 
     def _set_state(self, new_state: JOB_STATE):
-        result = self._post(data={
+        return self._post(data={
             'state': new_state.value
         })
-        print(result)
 
     def upload(self, entries: List[dict]):
         self.add_batch(entries)
@@ -102,7 +101,6 @@ class Job(base.AsyncService):
                 return self.wait()
 
         if BATCH_STATE.FAILED in batch_states:
-            print(self.get_errors())
             raise exceptions.BulkJobFailedError('One or more batches failed')
 
         return self.get_result()

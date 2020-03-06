@@ -16,9 +16,11 @@ class Connection:
     def request(self, verb: VERB, **kwargs) -> requests.Response:
         kwargs['url'] = url_normalize(kwargs['url'])
         result = getattr(self.session, verb.value)(**kwargs)
+        """
         logging.info('Verb: {verb}, URL: {url}, Result: {result}'.format(
             verb=verb.value,
             url=kwargs['url'],
             result=result.text
         ))
+        """
         return result

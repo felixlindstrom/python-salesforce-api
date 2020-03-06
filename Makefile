@@ -1,5 +1,5 @@
 build:
-    python setup.py sdist
+	python setup.py sdist
 
 upload:
-    python -m twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
+	python -m twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
