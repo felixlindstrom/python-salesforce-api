@@ -27,6 +27,7 @@ class JOB_STATE(Enum):
     ABORTED = 'Aborted'
     JOB_COMPLETE = 'JobComplete'
     FAILED = 'Failed'
+    IN_PROGRESS = 'InProgress'
 
 
 JOB_STATES_DONE = [JOB_STATE.JOB_COMPLETE, JOB_STATE.ABORTED, JOB_STATE.FAILED]
