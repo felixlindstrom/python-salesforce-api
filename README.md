@@ -390,7 +390,7 @@ Retrieving
 ----------
 Example
 ```python
-from salesforce_api.models.retrieve import Type
+from salesforce_api.models.shared import Type
 
 
 # Decide what you want to retrieve
