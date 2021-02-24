@@ -12,7 +12,7 @@ from . import base
 class Retrieve(base.SoapService):
     def retrieve(self, types: List[shared_models.Type], options: retrieve_models.Options = retrieve_models.Options()) -> 'Retrievement':
         result = self._post(action='retrieve', message_path='retrieve/retrieve.msg', message_attributes={
-            'api_version': const.API_VERSION,
+            'api_version': self.connection.version,
             'single_package': options.single_package,
             'unpackaged': self._prepare_unpackaged_xml(types)
         })

@@ -28,29 +28,27 @@ TEST_OBJECT_NAME = 'Contact'
 TEST_BULK_OPERATION = 'insert'
 
 
-def get_data(path):
-    return Template(open(os.path.dirname(__file__) + '/data/' + path, 'r').read()).substitute(
-        access_token=TEST_ACCESS_TOKEN,
-        instance_url=TEST_INSTANCE_URL,
-        id=TEST_ID,
-        issued_at=TEST_ISSUE_TIME,
-        signature=TEST_SIGNATURE,
-
-        user_email=TEST_USER_EMAIL,
-        user_id=TEST_USER_ID,
-        user_full_name=TEST_USER_FULL_NAME,
-        role_id=TEST_ROLE_ID,
-        profile_id=TEST_PROFILE_ID,
-        org_name=TEST_ORG_NAME,
-        org_id=TEST_ORG_ID,
-        server_url=TEST_SERVER_URL,
-        metadata_url=TEST_METADATA_URL,
-
-        object=TEST_OBJECT_NAME,
-        operation=TEST_BULK_OPERATION,
-
-        version=const.API_VERSION
-    )
+def get_data(path, sub_overrides={}):
+    substitutes = {**{
+        'access_token': TEST_ACCESS_TOKEN,
+        'instance_url': TEST_INSTANCE_URL,
+        'id': TEST_ID,
+        'issued_at': TEST_ISSUE_TIME,
+        'signature': TEST_SIGNATURE,
+        'user_email': TEST_USER_EMAIL,
+        'user_id': TEST_USER_ID,
+        'user_full_name': TEST_USER_FULL_NAME,
+        'role_id': TEST_ROLE_ID,
+        'profile_id': TEST_PROFILE_ID,
+        'org_name': TEST_ORG_NAME,
+        'org_id': TEST_ORG_ID,
+        'server_url': TEST_SERVER_URL,
+        'metadata_url': TEST_METADATA_URL,
+        'object': TEST_OBJECT_NAME,
+        'operation': TEST_BULK_OPERATION,
+        'version': const.API_VERSION
+    }, **sub_overrides}
+    return Template(open(os.path.dirname(__file__) + '/data/' + path, 'r').read()).substitute(substitutes)
 
 
 class BaseTest:
