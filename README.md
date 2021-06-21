@@ -76,10 +76,11 @@ client = Salesforce(username='test@example.com',
                     client_secret='my-secret')
 ```
 
-If you already have a token, obtain elsewhere, you can just as easily create a new client.
+If you already have an OAuth access token, obtained elsewhere, you can just as easily create a new client.
 ```python
 from salesforce_api import Salesforce
-client = Salesforce(access_token='access-token-here')
+client = Salesforce(access_token='access-token-here',
+                    domain='access-token-domain')
 ```
 
 If you want to explicitly use one or the other methods of authenticating, you can do that as well
@@ -89,6 +90,14 @@ client = Salesforce(login.oauth2(username='test@example.com',
                                  password='my-password',
                                  client_id='123',
                                  client_secret='my-secret'))
+```
+
+If you want to use a specific version of the Salesforce API, you can specify this:
+```python
+from salesforce_api import Salesforce
+client = Salesforce(access_token='access-token-here',
+                    domain='access-token-domain',
+                    api_version='51.0')
 ```
 
 Record management
