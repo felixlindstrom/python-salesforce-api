@@ -82,7 +82,7 @@ def soap(instance_url: str, username: str, password: str = None, security_token:
          password_and_security_token: str = None, session: requests.Session = None,
          api_version: str = None) -> core.Connection:
     session = misc_utils.get_session(session)
-    instance_url = instance_url + '/services/Soap/c/' + misc_utils.decide_version(api_version)
+    soap_url = instance_url + '/services/Soap/c/' + misc_utils.decide_version(api_version)
     print(instance_url)
 
     body = soap_utils.get_message('login/login.msg').format(
@@ -90,16 +90,14 @@ def soap(instance_url: str, username: str, password: str = None, security_token:
         password=password_and_security_token or password + security_token
     )
 
-    response = soap_utils.Result(session.post(instance_url, headers={
+    response = soap_utils.Result(session.post(soap_url, headers={
         'Content-Type': 'text/xml',
         'SOAPAction': 'login'
     }, data=body).text)
 
     if response.has('soapenv:Envelope/soapenv:Body/loginResponse/result/sessionId'):
         session_id = response.get_value('soapenv:Envelope/soapenv:Body/loginResponse/result/sessionId')
-        server_url = response.get_value('soapenv:Envelope/soapenv:Body/loginResponse/result/serverUrl')
-        instance = re.match(r'(https://(.*).salesforce\.com/)', server_url).group(1)
-        return plain_access_token(access_token=session_id, instance_url=instance, session=session, api_version=api_version)
+        return plain_access_token(access_token=session_id, instance_url=instance_url, session=session, api_version=api_version)
 
     if not response.has('soapenv:Envelope/soapenv:Body/soapenv:Fault/faultcode'):
         raise exceptions.AuthenticationError
