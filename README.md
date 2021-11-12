@@ -265,7 +265,7 @@ Example
 client.bulk.upsert('Contact', [
     {'LastName': 'Lindstrom', 'Email': 'test@example.com', 'MyId__c': 1},
     {'LastName': 'Something else', 'Email': 'test@example.com', 'MyId__c': 2}
-], external_id_field='MyId__c')
+], external_id_field_name='MyId__c')
 ```
 Returns
 ```python
