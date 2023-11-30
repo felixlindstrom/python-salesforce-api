@@ -83,7 +83,6 @@ def soap(instance_url: str, username: str, password: str = None, security_token:
          api_version: str = None) -> core.Connection:
     session = misc_utils.get_session(session)
     instance_url = instance_url + '/services/Soap/c/' + misc_utils.decide_version(api_version)
-    print(instance_url)
 
     body = soap_utils.get_message('login/login.msg').format(
         username=username,
