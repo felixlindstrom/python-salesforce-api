@@ -36,17 +36,17 @@ class Options(base.Model):
             self.__setattr__(key, kwargs[key])
 
     def as_xml(self):
-        return '\n'.join([
+        return '\n'.join(
             self._get_data_for_key(key, value)
             for key, value in vars(self).items()
-        ])
+        )
 
     def _get_data_for_key(self, key, value):
         if key == 'runTests':
-            return ''.join([
+            return ''.join(
                 f'<met:runTests>{test}</met:runTests>'
                 for test in value
-            ])
+            )
         return f'<met:{key}>{value}</met:{key}>'
 
 
