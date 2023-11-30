@@ -19,7 +19,8 @@ class _Service:
         return '/'.join(
             x.strip('/')
             for x in parts
-            if x is not None and x != ''
+            if x
+
         ).format(
             version=self.connection.version
         )
