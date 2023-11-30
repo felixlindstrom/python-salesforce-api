@@ -18,25 +18,25 @@ class TestServiceBulk(helpers.BaseTest):
             'id': _JOB_ID
         })
 
-        self.register_uri(requests_mock, VERB.POST, _BASE_URL + '/' + _JOB_ID, json={
+        self.register_uri(requests_mock, VERB.POST, f'{_BASE_URL}/{_JOB_ID}', json={
             'id': _JOB_ID
         })
 
-        self.register_uri(requests_mock, VERB.GET, _BASE_URL + '/' + _JOB_ID, json={
+        self.register_uri(requests_mock, VERB.GET, f'{_BASE_URL}/{_JOB_ID}', json={
             'id': _JOB_ID,
             'state': JOB_STATE.CLOSED.value
         })
 
-        self.register_uri(requests_mock, VERB.POST, _BASE_URL + '/' + _JOB_ID + '/batch', json={
+        self.register_uri(requests_mock, VERB.POST, f'{_BASE_URL}/{_JOB_ID}/batch', json={
             'id': _BATCH_ID
         })
 
-        self.register_uri(requests_mock, VERB.GET, _BASE_URL + '/' + _JOB_ID + '/batch/' + _BATCH_ID, json={
+        self.register_uri(requests_mock, VERB.GET, f'{_BASE_URL}/{_JOB_ID}/batch/{_BATCH_ID}', json={
             'id': _BATCH_ID,
             'state': BATCH_STATE.COMPLETED.value
         })
 
-        self.register_uri(requests_mock, VERB.GET, _BASE_URL + '/' + _JOB_ID + '/batch/' + _BATCH_ID + '/result', text=helpers.get_data('bulk/v1/success_result.txt'))
+        self.register_uri(requests_mock, VERB.GET, f'{_BASE_URL}/{_JOB_ID}/batch/{_BATCH_ID}/result', text=helpers.get_data('bulk/v1/success_result.txt'))
 
     def create_contact(self, first_name, last_name):
         return {
