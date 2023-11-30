@@ -60,7 +60,7 @@ class Client(bulk_base.Client, base.AsyncService):
 
 class Job(base.AsyncService):
     def __init__(self, connection, job_id):
-        super().__init__(connection, 'job/' + job_id)
+        super().__init__(connection, f'job/{job_id}')
         self.job_id = job_id
         self.batches = []
 

@@ -20,7 +20,6 @@ class _Service:
             x.strip('/')
             for x in parts
             if x
-
         ).format(
             version=self.connection.version
         )
@@ -40,7 +39,7 @@ class RestService(_Service):
         self._setup_session()
 
     def _setup_session(self) -> None:
-        self.connection.session.headers['Authorization'] = 'Bearer ' + self.connection.access_token
+        self.connection.session.headers['Authorization'] = f'Bearer {self.connection.access_token}'
 
     def _request(self, verb: VERB, **kwargs):
         if 'headers' not in kwargs:

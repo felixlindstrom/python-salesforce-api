@@ -31,7 +31,7 @@ class Options(base.Model):
             elif key == 'runTests' and not isinstance(kwargs[key], list):
                 raise Exception('Tests must be specified as a list')
             elif key not in specials and not isinstance(kwargs[key], bool):
-                raise Exception('Invalid option value for ' + key)
+                raise Exception(f'Invalid option value for {key}')
 
             self.__setattr__(key, kwargs[key])
 

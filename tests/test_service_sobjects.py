@@ -24,7 +24,7 @@ class TestServiceSObject(helpers.BaseTest):
         return self.get_service('sobjects').__getattr__(_TEST_OBJECT)
 
     def _get_url(self, additional=None):
-        return '/services/data/v{version}/sobjects/' + _TEST_OBJECT + ('/' + additional if additional else '')
+        return '/services/data/v{version}/sobjects/' + _TEST_OBJECT + (f'/{additional}' if additional else '')
 
     def test_metadata(self, requests_mock):
         self.register_uri(requests_mock, VERB.GET, self._get_url(), text='{}')

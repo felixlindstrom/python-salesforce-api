@@ -12,7 +12,7 @@ def magic(domain: str = None, username: str = None, password: str = None, securi
     # Determine address and instance url
     if domain is None:
         domain = 'test.salesforce.com' if is_sandbox else 'login.salesforce.com'
-    instance_url = 'https://' + domain
+    instance_url = f'https://{domain}'
 
     # Figure out how to authenticate
     if all([instance_url, username]) and (all([password, security_token]) or password_and_security_token):
@@ -59,7 +59,7 @@ def plain_access_token(instance_url: str, access_token: str, session: requests.S
 def oauth2(instance_url: str, client_id: str, client_secret: str, username: str, password: str,
            session: requests.Session = None, api_version: str = None) -> core.Connection:
     session = misc_utils.get_session(session)
-    response = session.post(instance_url + '/services/oauth2/token', data=dict(
+    response = session.post(f'{instance_url}/services/oauth2/token', data=dict(
         grant_type='password',
         client_id=client_id,
         client_secret=client_secret,
@@ -73,7 +73,7 @@ def oauth2(instance_url: str, client_id: str, client_secret: str, username: str,
     elif response_json.get('error') == 'invalid_client':
         raise exceptions.AuthenticationInvalidClientSecretError
     elif response.status_code != 200:
-        raise exceptions.AuthenticationError('Status-code ' + str(response.status_code) + ' returned while trying to authenticate')
+        raise exceptions.AuthenticationError(f'Status-code {response.status_code} returned while trying to authenticate')
 
     return plain_access_token(response_json['instance_url'], access_token=response_json['access_token'], session=session, api_version=api_version)
 
@@ -82,7 +82,7 @@ def soap(instance_url: str, username: str, password: str = None, security_token:
          password_and_security_token: str = None, session: requests.Session = None,
          api_version: str = None) -> core.Connection:
     session = misc_utils.get_session(session)
-    instance_url = instance_url + '/services/Soap/c/' + misc_utils.decide_version(api_version)
+    instance_url = f'{instance_url}/services/Soap/c/{misc_utils.decide_version(api_version)}'
 
     body = soap_utils.get_message('login/login.msg').format(
         username=username,

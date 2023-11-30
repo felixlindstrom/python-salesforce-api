@@ -4,7 +4,8 @@ from .. import exceptions, config
 
 
 def get_message(path: str) -> str:
-    return open(config.DATA_DIRECTORY + 'soap_messages/' + path).read()
+    return (config.DATA_DIRECTORY / 'soap_messages' / path).read_text()
+
 
 def parse_path(path: str) -> list:
     return path.split('/')

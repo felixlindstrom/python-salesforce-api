@@ -61,7 +61,7 @@ class Client(bulk_base.Client, base.RestService):
 
 class Job(base.RestService):
     def __init__(self, connection, job_id):
-        super().__init__(connection, 'jobs/ingest/' + job_id)
+        super().__init__(connection, f'jobs/ingest/{job_id}')
         self.job_id = job_id
 
     def _set_state(self, new_state: JOB_STATE):

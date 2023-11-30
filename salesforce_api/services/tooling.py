@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from .. import core
 from ..models import tooling as tooling_models
 from . import base
@@ -17,8 +19,7 @@ class Tooling(base.RestService):
         )
 
     def execute_apex_from_file(self, file_path: str):
-        with open(file_path, 'r') as fh:
-            return self.execute_apex(fh.read())
+        return self.execute_apex(Path(file_path).read_text())
 
     def query(self, query: str):
         return self._get('query', {'q': query})
@@ -41,7 +42,7 @@ class Tooling(base.RestService):
 
 class ToolingObject(base.RestService):
     def __init__(self, object_name: str, connection: core.Connection):
-        super().__init__(connection, 'tooling/sobjects/' + object_name)
+        super().__init__(connection, f'tooling/sobjects/{object_name}')
 
     def describe(self):
         return self._get('describe')

@@ -13,12 +13,12 @@ class TestServiceBulk(helpers.BaseTest):
     def setup_instance(self, requests_mock):
         self.register_uri(requests_mock, VERB.POST, _BASE_URL, text=helpers.get_data('bulk/v2/create.txt'))
 
-        self.register_uri(requests_mock, VERB.GET, _BASE_URL + '/' + _JOB_ID, text=helpers.get_data('bulk/v2/info.txt'))
-        self.register_uri(requests_mock, VERB.PATCH, _BASE_URL + '/' + _JOB_ID, text=helpers.get_data('bulk/v2/upload_complete.txt'))
-        self.register_uri(requests_mock, VERB.PUT, _BASE_URL + '/' + _JOB_ID + '/batches', text='')
+        self.register_uri(requests_mock, VERB.GET, f'{_BASE_URL}/{_JOB_ID}', text=helpers.get_data('bulk/v2/info.txt'))
+        self.register_uri(requests_mock, VERB.PATCH, f'{_BASE_URL}/{_JOB_ID}', text=helpers.get_data('bulk/v2/upload_complete.txt'))
+        self.register_uri(requests_mock, VERB.PUT, f'{_BASE_URL}/{_JOB_ID}/batches', text='')
 
-        self.register_uri(requests_mock, VERB.GET, _BASE_URL + '/' + _JOB_ID + '/successfulResults', text=helpers.get_data('bulk/v2/successful_results.txt'))
-        self.register_uri(requests_mock, VERB.GET, _BASE_URL + '/' + _JOB_ID + '/failedResults', text=helpers.get_data('bulk/v2/failed_results.txt'))
+        self.register_uri(requests_mock, VERB.GET, f'{_BASE_URL}/{_JOB_ID}/successfulResults', text=helpers.get_data('bulk/v2/successful_results.txt'))
+        self.register_uri(requests_mock, VERB.GET, f'{_BASE_URL}/{_JOB_ID}/failedResults', text=helpers.get_data('bulk/v2/failed_results.txt'))
 
 
     def create_contact(self, first_name, last_name):

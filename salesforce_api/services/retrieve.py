@@ -53,8 +53,8 @@ class Retrieve(base.SoapService):
         for _type in types:
             output.append('<types>')
             for member in _type.members:
-                output.append('<members>' + member + '</members>')
-            output.append('<name>' + _type.name + '</name>')
+                output.append(f'<members>{member}</members>')
+            output.append(f'<name>{_type.name}</name>')
             output.append('</types>')
         return '\n'.join(output)
 
