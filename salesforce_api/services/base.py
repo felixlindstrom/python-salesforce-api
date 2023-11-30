@@ -20,7 +20,6 @@ class _Service:
             x.strip('/')
             for x in parts
             if x
-
         ).format(
             version=self.connection.version
         )

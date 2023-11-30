@@ -5,13 +5,13 @@ from . import bulk
 
 class SObjects(base.RestService):
     def __init__(self, connection: core.Connection):
-        super().__init__(connection)
+        super().__init__(connection, 'sobjects')
 
     def describe(self):
-        return self._get('sobjects')
+        return self._get()
 
     def _query(self, query_string: str, include_deleted: bool = False):
-        return self._get('queryAll' if include_deleted else 'query', {'q': query_string})
+        return self._get('../queryAll' if include_deleted else '../query', {'q': query_string})
 
     def _query_more(self, next_url: str):
         return self._get_url(f'{self.connection.instance_url}{next_url}')
