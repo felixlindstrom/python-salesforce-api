@@ -12,13 +12,12 @@ class FilePreparer:
         return len(self.entries) > 0
 
     def _check_headers(self) -> bool:
-        headers = [':'.join(x.keys()) for x in self.entries]
-        headers = list(set(headers))
+        headers = {tuple(x.keys()) for x in self.entries}
         return len(headers) == 1
 
     def _check_empty_rows(self) -> bool:
         for row in self.entries:
-            if ''.join(str(x) for x in row.values() if x is not None).strip() == '':
+            if all(x is None or str(x).strip() == '' for x in row.values()):
                 return False
         return True
 
@@ -38,7 +37,6 @@ class FilePreparer:
         writer.writerows([
             entry.values()
             for entry in self.entries
-            if ''.join([str(x) for x in entry.values() if x is not None]) != ''
         ])
         return file_handle
 

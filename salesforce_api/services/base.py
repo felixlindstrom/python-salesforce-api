@@ -15,14 +15,13 @@ class _Service:
         pass
 
     def _format_url(self, uri: str = None) -> str:
-        parts = [self.connection.instance_url, self.base_uri]
-        if uri is not None:
-            parts.append(uri)
-        return str('/'.join([
+        parts = [self.connection.instance_url, self.base_uri, uri]
+        return '/'.join(
             x.strip('/')
             for x in parts
-            if x is not None and x != ''
-        ])).format(
+            if x
+
+        ).format(
             version=self.connection.version
         )
 

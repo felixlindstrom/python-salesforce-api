@@ -145,11 +145,11 @@ class Batch(base.AsyncService):
     def _convert_result(self, row):
         if row['success']:
             return models.SuccessResultRecord(row['id'], row)
-        error = ', '.join([
+        error = ', '.join(
             x['message']
             for x in row['errors']
-            if x['message'] != None
-        ])
+            if x['message'] is not None
+        )
         return models.FailResultRecord(row['id'], error, row)
 
     def wait(self) -> List[models.ResultRecord]:
