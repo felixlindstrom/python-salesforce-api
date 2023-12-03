@@ -1,4 +1,6 @@
 import json
+from typing import Union
+
 import requests
 from .. import exceptions, config, core
 from ..const.service import VERB
@@ -24,10 +26,9 @@ class _Service:
             version=self.connection.version
         )
 
-    def request(self, verb: VERB, **kwargs) -> requests.Response:
-        if 'uri' in kwargs:
-            kwargs['url'] = self._format_url(kwargs['uri'] or '')
-            del kwargs['uri']
+    def request(self, verb: VERB, uri: Union[str, None] = None, **kwargs) -> requests.Response:
+        if 'url' not in kwargs:
+            kwargs['url'] = self._format_url(uri)
         return self.connection.request(verb, **kwargs)
 
 
@@ -135,7 +136,7 @@ class AsyncService(_Service):
 
 class SoapService(_Service):
     def __init__(self, connection: core.Connection):
-        super().__init__(connection, 'services/Soap/m/{version}/')
+        super().__init__(connection, 'services/Soap/m/{version}')
 
     def _extend_attributes(self, attributes: dict) -> dict:
         return {**attributes, **{
@@ -149,7 +150,7 @@ class SoapService(_Service):
 
     def _post(self, action=None, message_path=None, message_attributes=None) -> soap.Result:
         data = self._prepare_message(message_path, message_attributes or {})
-        result = self.request(VERB.POST, url=self._format_url(''), data=data, headers={
+        result = self.request(VERB.POST, data=data, headers={
             'Content-type': 'text/xml',
             'SOAPAction': action
         })

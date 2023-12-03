@@ -13,7 +13,7 @@ class ApexExecutionResult(base.Model):
 
     @staticmethod
     def create(input_data):
-        if 'success' in input_data and input_data['success']:
+        if input_data.get('success'):
             return SuccessfulApexExecutionResult(input_data)
         return FailedApexExecutionResult(input_data)
 

@@ -48,7 +48,7 @@ class ToolingObject(base.RestService):
         return self._get('describe')
 
     def create(self, json: dict = None):
-        return self._post('', json=json)
+        return self._post(json=json)
 
     def get(self, record_id: str):
         return self._get(record_id)

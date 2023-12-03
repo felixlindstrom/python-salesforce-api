@@ -10,10 +10,10 @@ from . import base
 
 class Deploy(base.SoapService):
     def _get_zip_content(self, input_file) -> str:
-        if isinstance(input_file, str):
-            s = Path(input_file).read_bytes()
-        else:
+        try:
             s = input_file.read()
+        except AttributeError:
+            s = Path(input_file).read_bytes()
         return b64encode(s).decode()
 
     def deploy(self, input_zip, options: models.Options = models.Options()) -> 'Deployment':

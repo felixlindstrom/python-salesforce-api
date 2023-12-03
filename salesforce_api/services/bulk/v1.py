@@ -107,7 +107,7 @@ class Job(base.AsyncService):
 
     @classmethod
     def create(cls, connection, operation: OPERATION, object_name: str, external_id_field_name: str = None):
-        result = base.AsyncService(connection, 'job')._post(uri='', data={
+        result = base.AsyncService(connection, 'job')._post(data={
             'operation': operation.value,
             'object': object_name,
             'contentType': 'JSON',

@@ -1,4 +1,6 @@
 import distutils.util
+from typing import Union
+
 import requests
 import hashlib
 from .. import const
@@ -8,8 +10,10 @@ def parse_bool(input_value: str) -> bool:
     return distutils.util.strtobool(input_value)
 
 
-def get_session(session: requests.Session = None):
-    return session if isinstance(session, requests.Session) else requests.Session()
+def get_session(session: Union[requests.Session, None] = None):
+    if session is None:
+        return requests.Session()
+    return session
 
 
 def hash_list(input_list):
@@ -19,5 +23,7 @@ def hash_list(input_list):
                   .hexdigest()
 
 
-def decide_version(version: str = None) -> str:
-    return version if version is not None else const.API_VERSION
+def decide_version(version: Union[str, None] = None) -> str:
+    if version is None:
+        return const.API_VERSION
+    return version

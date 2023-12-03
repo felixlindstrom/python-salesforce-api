@@ -3,7 +3,7 @@ from . import base
 
 class Basic(base.RestService):
     def __init__(self, connection):
-        super().__init__(connection, '')
+        super().__init__(connection)
 
     def versions(self) -> dict:
         return self._get_url(f'{self.connection.instance_url}/services/data')

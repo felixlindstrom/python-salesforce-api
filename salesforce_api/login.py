@@ -1,6 +1,6 @@
 import re
 import requests
-from . import core, exceptions, const
+from . import core, exceptions
 from .utils import misc as misc_utils
 from .utils import soap as soap_utils
 
@@ -15,7 +15,7 @@ def magic(domain: str = None, username: str = None, password: str = None, securi
     instance_url = f'https://{domain}'
 
     # Figure out how to authenticate
-    if all([instance_url, username]) and (all([password, security_token]) or password_and_security_token):
+    if instance_url and username and ((password and security_token) or password_and_security_token):
         return soap(
             instance_url=instance_url,
             username=username,
@@ -25,7 +25,7 @@ def magic(domain: str = None, username: str = None, password: str = None, securi
             session=session,
             api_version=api_version
         )
-    elif all([instance_url, client_id, client_secret, username, password]):
+    elif instance_url and client_id and client_secret and username and password:
         return oauth2(
             instance_url=instance_url,
             client_id=client_id,
@@ -35,7 +35,7 @@ def magic(domain: str = None, username: str = None, password: str = None, securi
             session=session,
             api_version=api_version
         )
-    elif all([instance_url, access_token]):
+    elif instance_url and access_token:
         return plain_access_token(
             instance_url=instance_url,
             access_token=access_token,
