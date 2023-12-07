@@ -224,6 +224,13 @@ Return
 }, ...]
 ``` 
 
+If the amount of data is too large and you want to avoid having it all in memory at once, use the `query_iter` method.
+
+Example
+```python
+client.sobjects.query_iter("SELECT Id, FirstName, LastName FROM Contact")
+```
+
 Bulk
 ----
 

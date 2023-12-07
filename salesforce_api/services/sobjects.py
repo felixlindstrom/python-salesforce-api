@@ -16,13 +16,15 @@ class SObjects(base.RestService):
     def _query_more(self, next_url: str):
         return self._get_url(f'{self.connection.instance_url}{next_url}')
 
-    def query(self, query_string: str, include_deleted: bool = False):
+    def query_iter(self, query_string: str, include_deleted: bool = False) -> Iterator[Dict[str, Any]]:
         result = self._query(query_string, include_deleted)
-        output = result['records']
+        yield from result['records']
         while not result['done']:
             result = self._query_more(result['nextRecordsUrl'])
-            output += result['records']
-        return output
+            yield from result['records']
+
+    def query(self, query_string: str, include_deleted: bool = False) -> List[Dict[str, Any]]:
+        return list(self.query_iter(query_string, include_deleted))
 
     def __getattr__(self, name: str):
         return SObject(self.connection, name)
