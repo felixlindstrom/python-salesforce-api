@@ -1,8 +1,9 @@
 import pytest
 
+from salesforce_api import core, exceptions, login
+from salesforce_api.const import API_VERSION
 from salesforce_api.const.service import VERB
 from . import helpers
-from salesforce_api import login, core, exceptions, const
 
 
 class TestOAuth:
@@ -40,7 +41,7 @@ class TestOAuth:
     def test_automatic_api_version(self, requests_mock):
         requests_mock.register_uri('POST', '/services/oauth2/token', text=helpers.get_data('login/oauth/success.txt'), status_code=200)
         connection = self.create_connection()
-        assert connection.version == const.API_VERSION
+        assert connection.version == API_VERSION
 
     def test_manual_api_version(self, requests_mock):
         expected_api_version = '123.4'
@@ -83,7 +84,7 @@ class TestSoap(helpers.BaseTest):
 
     def test_automatic_api_version(self, requests_mock):
         self.register_uri(requests_mock, VERB.POST, '/services/Soap/c/{version}', text=helpers.get_data('login/soap/success.txt'))
-        assert self.create_connection().version == const.API_VERSION
+        assert self.create_connection().version == API_VERSION
 
     def test_manual_api_version(self, requests_mock):
         expected_api_version = '123.4'

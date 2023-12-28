@@ -1,5 +1,4 @@
 import csv
-import io
 import json
 import time
 from enum import Enum
@@ -98,9 +97,9 @@ class Job(base.RestService):
     def is_done(self) -> bool:
         return self.get_state() in JOB_STATES_DONE
 
-    def _get_results(self, uri, callback):
-        result = self.connection.request(VERB.GET, url=self._format_url(uri)).text
-        reader = csv.DictReader(io.StringIO(result))
+    def _get_results(self, uri: str, callback):
+        response = self.request(VERB.GET, uri)
+        reader = csv.DictReader(response.iter_lines(decode_unicode=True))
         return [callback(x) for x in reader]
 
     def get_successful_results(self) -> List[models.ResultRecord]:

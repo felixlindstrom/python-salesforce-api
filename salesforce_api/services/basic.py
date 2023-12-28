@@ -6,7 +6,7 @@ class Basic(base.RestService):
         super().__init__(connection)
 
     def versions(self) -> dict:
-        return self._get_url(f'{self.connection.instance_url}/services/data')
+        return self._get('..')
 
     def resources(self) -> dict:
         return self._get()

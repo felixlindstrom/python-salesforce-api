@@ -1,7 +1,8 @@
 import requests
-from .core import Connection
+
 from . import login
-from .services import sobjects, basic, tooling, deploy, retrieve, bulk
+from .core import Connection
+from .services import basic, bulk, deploy, retrieve, sobjects, tooling
 from .utils import misc as misc_utils
 
 

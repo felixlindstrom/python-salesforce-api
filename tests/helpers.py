@@ -1,8 +1,9 @@
 import time
-import json
 from pathlib import Path
 from string import Template
-from salesforce_api import Salesforce, const
+
+from salesforce_api import Salesforce
+from salesforce_api.const import API_VERSION
 from salesforce_api.const.service import VERB
 
 TEST_CLIENT_KEY = 'test-key'
@@ -46,7 +47,7 @@ def get_data(path, sub_overrides={}):
         'metadata_url': TEST_METADATA_URL,
         'object': TEST_OBJECT_NAME,
         'operation': TEST_BULK_OPERATION,
-        'version': const.API_VERSION
+        'version': API_VERSION
     }, **sub_overrides}
     return Template((Path(__file__).parent / 'data' / path).read_text()).substitute(substitutes)
 
@@ -63,10 +64,10 @@ class BaseTest:
 
     def register_uri(self, requests_mock, verb: VERB, uri: str, **kwargs):
         if 'json' in kwargs:
-            kwargs['text'] = json.dumps(kwargs['json'])
-            del kwargs['json']
+            headers = kwargs.setdefault('headers', {})
+            headers['Content-Type'] = 'application/json'
         requests_mock.register_uri(
             verb.value,
-            uri.format_map({'version': const.API_VERSION}),
+            uri.format_map({'version': API_VERSION}),
             **kwargs
         )

@@ -1,9 +1,10 @@
 import distutils.util
+import hashlib
 from typing import Union
 
 import requests
-import hashlib
-from .. import const
+
+from ..const import API_VERSION
 
 
 def parse_bool(input_value: str) -> bool:
@@ -25,5 +26,9 @@ def hash_list(input_list):
 
 def decide_version(version: Union[str, None] = None) -> str:
     if version is None:
-        return const.API_VERSION
+        return API_VERSION
     return version
+
+
+def join_path(*args):
+    return '/'.join(x.strip('/') for x in args if x)

@@ -1,6 +1,7 @@
+from typing import Any, Dict, Iterator, List
+
+from . import base, bulk
 from .. import core
-from . import base
-from . import bulk
 
 
 class SObjects(base.RestService):
@@ -11,10 +12,10 @@ class SObjects(base.RestService):
         return self._get()
 
     def _query(self, query_string: str, include_deleted: bool = False):
-        return self._get('../queryAll' if include_deleted else '../query', {'q': query_string})
+        return self._get('../queryAll' if include_deleted else '../query', params={'q': query_string})
 
     def _query_more(self, next_url: str):
-        return self._get_url(f'{self.connection.instance_url}{next_url}')
+        return self._get(url=f'{self.connection.instance_url}{next_url}')
 
     def query_iter(self, query_string: str, include_deleted: bool = False) -> Iterator[Dict[str, Any]]:
         result = self._query(query_string, include_deleted)
