@@ -23,6 +23,16 @@ class TestOAuth:
         assert isinstance(connection, core.Connection)
         assert connection.access_token == helpers.TEST_ACCESS_TOKEN
 
+    def test_authenticate_success_client_credentials(self, requests_mock):
+        requests_mock.register_uri('POST', '/services/oauth2/token', text=helpers.get_data('login/oauth/success.txt'), status_code=200)
+        connection = login.oauth2(
+            instance_url=helpers.TEST_INSTANCE_URL,
+            client_id=helpers.TEST_CLIENT_KEY,
+            client_secret=helpers.TEST_CLIENT_SECRET,
+        )
+        assert isinstance(connection, core.Connection)
+        assert connection.access_token == helpers.TEST_ACCESS_TOKEN
+
     def test_authenticate_client_id_failure(self, requests_mock):
         requests_mock.register_uri('POST', '/services/oauth2/token', text=helpers.get_data('login/oauth/invalid_client_id.txt'), status_code=400)
         with pytest.raises(exceptions.AuthenticationInvalidClientIdError):

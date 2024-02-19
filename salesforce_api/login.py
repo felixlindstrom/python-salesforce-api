@@ -1,4 +1,6 @@
 import re
+from typing import Union
+
 import requests
 from . import core, exceptions
 from .utils import misc as misc_utils
@@ -9,13 +11,13 @@ def magic(domain: str = None, username: str = None, password: str = None, securi
           password_and_security_token: str = None, client_id: str = None, client_secret: str = None,
           access_token: str = None, session: requests.Session = None, is_sandbox=False, api_version: str = None) -> core.Connection:
     session = misc_utils.get_session(session)
-    # Determine address and instance url
+    # Determine instance url
     if domain is None:
         domain = 'test.salesforce.com' if is_sandbox else 'login.salesforce.com'
     instance_url = f'https://{domain}'
 
     # Figure out how to authenticate
-    if instance_url and username and ((password and security_token) or password_and_security_token):
+    if username:
         return soap(
             instance_url=instance_url,
             username=username,
@@ -25,7 +27,7 @@ def magic(domain: str = None, username: str = None, password: str = None, securi
             session=session,
             api_version=api_version
         )
-    elif instance_url and client_id and client_secret and username and password:
+    elif client_id and client_secret:
         return oauth2(
             instance_url=instance_url,
             client_id=client_id,
@@ -35,7 +37,7 @@ def magic(domain: str = None, username: str = None, password: str = None, securi
             session=session,
             api_version=api_version
         )
-    elif instance_url and access_token:
+    elif access_token:
         return plain_access_token(
             instance_url=instance_url,
             access_token=access_token,
@@ -56,16 +58,24 @@ def plain_access_token(instance_url: str, access_token: str, session: requests.S
     )
 
 
-def oauth2(instance_url: str, client_id: str, client_secret: str, username: str, password: str,
-           session: requests.Session = None, api_version: str = None) -> core.Connection:
+def oauth2(instance_url: str, client_id: str, client_secret: str, username: Union[str, None] = None, password: Union[str, None] = None,
+           session: Union[requests.Session, None] = None, api_version: Union[str, None] = None) -> core.Connection:
     session = misc_utils.get_session(session)
-    response = session.post(f'{instance_url}/services/oauth2/token', data=dict(
-        grant_type='password',
-        client_id=client_id,
-        client_secret=client_secret,
-        username=username,
-        password=password
-    ))
+    url = f'{instance_url}/services/oauth2/token'
+    if username and password:
+        response = session.post(url, data=dict(
+            grant_type='password',
+            client_id=client_id,
+            client_secret=client_secret,
+            username=username,
+            password=password,
+        ))
+    else:
+        response = session.post(
+            url,
+            data=dict(grant_type='client_credentials'),
+            auth=(client_id, client_secret),
+        )
     response_json = response.json()
 
     if response_json.get('error') == 'invalid_client_id':
@@ -81,6 +91,8 @@ def oauth2(instance_url: str, client_id: str, client_secret: str, username: str,
 def soap(instance_url: str, username: str, password: str = None, security_token: str = None,
          password_and_security_token: str = None, session: requests.Session = None,
          api_version: str = None) -> core.Connection:
+    if not ((password and security_token) or password_and_security_token):
+        raise exceptions.AuthenticationError('password and security_token or password_and_security_token required')
     session = misc_utils.get_session(session)
     instance_url = f'{instance_url}/services/Soap/c/{misc_utils.decide_version(api_version)}'
 

@@ -76,6 +76,14 @@ client = Salesforce(username='test@example.com',
                     client_secret='my-secret')
 ```
 
+You can also authenticate using the OAuth Client Credentials Flow given that's enabled for your connected app.
+```python
+from salesforce_api import Salesforce
+client = Salesforce(client_id='123',
+                    client_secret='my-secret',
+                    domain='my-domain')
+```
+
 If you already have an OAuth access token, obtained elsewhere, you can just as easily create a new client.
 ```python
 from salesforce_api import Salesforce
