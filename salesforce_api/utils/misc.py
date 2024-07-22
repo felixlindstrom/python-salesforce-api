@@ -1,4 +1,3 @@
-import distutils.util
 import hashlib
 from typing import Union
 
@@ -8,7 +7,7 @@ from ..const import API_VERSION
 
 
 def parse_bool(input_value: str) -> bool:
-    return distutils.util.strtobool(input_value)
+    return bool(input_value)
 
 
 def get_session(session: Union[requests.Session, None] = None):
